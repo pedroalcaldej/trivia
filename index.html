@@ -3,646 +3,733 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Ame vs Pedro: Desafío Trivia Chilena</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <title>Trivia Flashcards: Ame vs Pedro</title>
   <style>
-    body {
-      font-family: 'Inter', sans-serif;
-      background: #090d16;
-      color: #ffffff;
-      min-height: 100vh;
-      user-select: none;
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     }
-    .text-ame { color: #f472b6; }
-    .bg-ame { background-color: #ec4899; }
-    .border-ame { border-color: #f472b6; }
-    
-    .text-pedro { color: #38bdf8; }
-    .bg-pedro { background-color: #0284c7; }
-    .border-pedro { border-color: #38bdf8; }
 
-    .key-cap {
-      box-shadow: inset 0 -2px 0 rgba(0,0,0,0.4);
+    body {
+      background-color: #0d0e12;
+      color: #f0f2f5;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px 15px;
     }
-    .shake {
-      animation: shake 0.4s cubic-bezier(.36,.07,.19,.97) both;
+
+    /* HEADER & SCOREBOARD */
+    header {
+      width: 100%;
+      max-width: 650px;
+      text-align: center;
+      margin-bottom: 20px;
     }
-    @keyframes shake {
-      10%, 90% { transform: translate3d(-2px, 0, 0); }
-      20%, 80% { transform: translate3d(4px, 0, 0); }
-      30%, 50%, 70% { transform: translate3d(-6px, 0, 0); }
-      40%, 60% { transform: translate3d(6px, 0, 0); }
+
+    h1 {
+      font-size: 1.4rem;
+      font-weight: 800;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #ffffff;
+      margin-bottom: 12px;
+    }
+
+    .scoreboard {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+      margin-bottom: 10px;
+    }
+
+    .player-card {
+      background: #161820;
+      border-radius: 12px;
+      padding: 12px 15px;
+      text-align: center;
+      border: 1px solid #2a2d3d;
+      position: relative;
+    }
+
+    .player-ame {
+      border-top: 4px solid #ff70a6;
+    }
+
+    .player-pedro {
+      border-top: 4px solid #70d6ff;
+    }
+
+    .player-name {
+      font-size: 1.1rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .player-ame .player-name { color: #ff70a6; }
+    .player-pedro .player-name { color: #70d6ff; }
+
+    /* MODO SECRETO: El marcador total permanece oculto */
+    .player-status-secret {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #828a9e;
+      margin-top: 6px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    /* CARDS CONTAINER */
+    .deck-container {
+      width: 100%;
+      max-width: 650px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .card-tracker {
+      font-size: 0.85rem;
+      color: #a0a5b5;
+      margin-bottom: 12px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+
+    /* FLASHCARD PERSPECTIVE & FLIP */
+    .flashcard-wrapper {
+      width: 100%;
+      height: 310px;
+      perspective: 1000px;
+      cursor: pointer;
+      margin-bottom: 18px;
+    }
+
+    .flashcard {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      transform-style: preserve-3d;
+      transition: transform 0.5s cubic-bezier(0.4, 0.2, 0.2, 1);
+      border-radius: 16px;
+    }
+
+    .flashcard.flipped {
+      transform: rotateY(180deg);
+    }
+
+    .card-face {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+      border-radius: 16px;
+      padding: 25px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: center;
+      text-align: center;
+      background: #161820;
+      border: 1px solid #2a2d3d;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+
+    .card-back {
+      transform: rotateY(180deg);
+      background: #191c28;
+      border-color: #31374a;
+    }
+
+    .category-badge {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      padding: 6px 14px;
+      border-radius: 20px;
+      background: #252938;
+      color: #e0e6ed;
+    }
+
+    .card-content {
+      font-size: 1.2rem;
+      font-weight: 600;
+      line-height: 1.5;
+      color: #ffffff;
+      margin: auto 0;
+    }
+
+    .card-back .card-content {
+      color: #70d6ff;
+    }
+
+    .card-hint {
+      font-size: 0.8rem;
+      color: #70778b;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    /* CONTROLES POR TARJETA DE PUNTOS */
+    .card-actions {
+      width: 100%;
+      background: #161820;
+      border: 1px solid #2a2d3d;
+      border-radius: 12px;
+      padding: 14px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+      margin-bottom: 18px;
+    }
+
+    .scoring-group {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .scoring-label {
+      font-size: 0.85rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .group-ame .scoring-label { color: #ff70a6; }
+    .group-pedro .scoring-label { color: #70d6ff; }
+
+    .btn-row {
+      display: flex;
+      gap: 8px;
+      width: 100%;
+    }
+
+    .score-btn {
+      flex: 1;
+      padding: 10px;
+      border: none;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      color: #ffffff;
+    }
+
+    .score-btn:active {
+      transform: scale(0.95);
+    }
+
+    .btn-ame-add { background: #ff70a6; color: #0d0e12; }
+    .btn-ame-sub { background: #3d1e2b; color: #ff70a6; }
+    
+    .btn-pedro-add { background: #70d6ff; color: #0d0e12; }
+    .btn-pedro-sub { background: #1c3543; color: #70d6ff; }
+
+    .card-point-status {
+      font-size: 0.75rem;
+      color: #828a9e;
+      margin-top: 2px;
+    }
+
+    /* NAVIGATION BUTTONS */
+    .nav-controls {
+      display: flex;
+      gap: 12px;
+      width: 100%;
+    }
+
+    .nav-btn {
+      flex: 1;
+      padding: 14px;
+      background: #202433;
+      border: 1px solid #33394f;
+      border-radius: 10px;
+      color: #ffffff;
+      font-weight: 600;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      font-size: 0.85rem;
+      transition: background 0.2s ease;
+    }
+
+    .nav-btn:hover {
+      background: #2b3044;
+    }
+
+    .nav-btn:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+    }
+
+    .finish-btn {
+      background: #2e7d32;
+      border-color: #388e3c;
+    }
+
+    .finish-btn:hover {
+      background: #388e3c;
+    }
+
+    /* ANALYTICS MODAL */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(5, 6, 8, 0.9);
+      backdrop-filter: blur(8px);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      z-index: 100;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+
+    .modal-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal-content {
+      background: #161820;
+      border: 1px solid #33394f;
+      border-radius: 16px;
+      padding: 28px;
+      max-width: 550px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      text-align: center;
+    }
+
+    .modal-title {
+      font-size: 1.5rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+      letter-spacing: 1.5px;
+    }
+
+    .winner-announcement {
+      font-size: 1.3rem;
+      font-weight: 700;
+      padding: 16px;
+      border-radius: 12px;
+      background: #202433;
+      margin-bottom: 20px;
+    }
+
+    .analysis-section {
+      text-align: left;
+      background: #0d0e12;
+      padding: 18px;
+      border-radius: 12px;
+      margin-bottom: 20px;
+      border: 1px solid #252938;
+    }
+
+    .analysis-section h3 {
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      color: #a0a5b5;
+      margin-bottom: 12px;
+      letter-spacing: 1px;
+    }
+
+    .restart-btn {
+      width: 100%;
+      padding: 14px;
+      background: #ff70a6;
+      color: #0d0e12;
+      border: none;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 1rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      cursor: pointer;
     }
   </style>
 </head>
-<body class="flex flex-col min-h-screen justify-between p-3 md:p-6 text-white">
+<body>
 
-  <!-- Header -->
-  <header class="max-w-5xl mx-auto w-full text-center mb-3">
-    <div class="inline-block bg-slate-800 border border-slate-700 rounded-full px-4 py-1 text-xs font-semibold text-slate-300 tracking-wider uppercase mb-2">
-      Trivia & Historia de Chile • Modo Simultáneo
+  <header>
+    <h1>TRIVIA FLASHCARDS</h1>
+    <div class="scoreboard">
+      <div class="player-card player-ame">
+        <div class="player-name">AME</div>
+        <div class="player-status-secret" id="status-ame">Puntos Ocultos</div>
+      </div>
+      <div class="player-card player-pedro">
+        <div class="player-name">PEDRO</div>
+        <div class="player-status-secret" id="status-pedro">Puntos Ocultos</div>
+      </div>
     </div>
-    <h1 class="text-3xl md:text-5xl font-black tracking-tight text-white uppercase">
-      <span class="text-ame">AME</span> <span class="text-slate-500 text-xl md:text-3xl">VS</span> <span class="text-pedro">PEDRO</span>
-    </h1>
-    <p class="text-slate-400 text-xs md:text-sm font-medium mt-1">
-      Respuestas ocultas durante la ronda. Buena = +1 | Mala o Sin Responder = -1
-    </p>
   </header>
 
-  <main class="max-w-5xl mx-auto w-full flex-1 flex flex-col justify-center gap-4">
+  <div class="deck-container">
+    <div class="card-tracker" id="card-tracker">TARJETA 1 DE 25</div>
 
-    <!-- Marcadores de Puntaje -->
-    <div class="grid grid-cols-2 gap-3 md:gap-6">
+    <div class="flashcard-wrapper" onclick="flipCard()">
+      <div class="flashcard" id="flashcard">
+        <!-- FRONT -->
+        <div class="card-face card-front">
+          <span class="category-badge" id="card-category">CATEGORÍA</span>
+          <div class="card-content" id="card-question">Cargando pregunta...</div>
+          <div class="card-hint">Toca la tarjeta para darla vuelta</div>
+        </div>
+        <!-- BACK -->
+        <div class="card-face card-back">
+          <span class="category-badge">RESPUESTA</span>
+          <div class="card-content" id="card-answer" style="visibility: hidden;">Cargando...</div>
+          <div class="card-hint">Toca para volver a la pregunta</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PUNTOS POR TARJETA -->
+    <div class="card-actions">
+      <div class="scoring-group group-ame">
+        <div class="scoring-label">AME</div>
+        <div class="btn-row">
+          <button class="score-btn btn-ame-sub" onclick="addPoint('ame', -1, event)">-1</button>
+          <button class="score-btn btn-ame-add" onclick="addPoint('ame', 1, event)">+1</button>
+        </div>
+        <div class="card-point-status" id="card-point-ame">Tarjeta: 0 pt</div>
+      </div>
+
+      <div class="scoring-group group-pedro">
+        <div class="scoring-label">PEDRO</div>
+        <div class="btn-row">
+          <button class="score-btn btn-pedro-sub" onclick="addPoint('pedro', -1, event)">-1</button>
+          <button class="score-btn btn-pedro-add" onclick="addPoint('pedro', 1, event)">+1</button>
+        </div>
+        <div class="card-point-status" id="card-point-pedro">Tarjeta: 0 pt</div>
+      </div>
+    </div>
+
+    <!-- NAVEGACIÓN -->
+    <div class="nav-controls">
+      <button class="nav-btn" id="btn-prev" onclick="prevCard()" disabled>Anterior</button>
+      <button class="nav-btn" id="btn-next" onclick="nextCard()">Siguiente</button>
+      <button class="nav-btn finish-btn" onclick="showResults()">Ver Ganador</button>
+    </div>
+  </div>
+
+  <!-- MODAL DE RESULTADOS FINALES -->
+  <div class="modal-overlay" id="results-modal">
+    <div class="modal-content">
+      <div class="modal-title">REVELACIÓN DE GANADOR</div>
       
-      <!-- Marcador Ame -->
-      <div id="card-ame" class="bg-slate-900 border-2 border-pink-500/40 rounded-2xl p-3 md:p-4 text-center relative overflow-hidden transition-all">
-        <div class="absolute top-0 left-0 w-full h-1 bg-pink-500"></div>
-        <h2 class="text-xl md:text-3xl font-black text-ame uppercase tracking-wider">AME</h2>
-        <div id="score-ame" class="text-4xl md:text-6xl font-black my-1 text-white">0</div>
-        <div id="status-ame" class="text-xs md:text-sm font-medium text-slate-400 h-6 flex items-center justify-center">
-          Esperando selección...
+      <div class="winner-announcement" id="winner-announcement">
+        CALCULANDO GANADOR...
+      </div>
+
+      <div class="analysis-section">
+        <h3>DESGLOSE Y ANÁLISIS DE CONOCIMIENTOS</h3>
+        <div id="analysis-text">
+          Analizando quién domina cada categoría...
         </div>
       </div>
 
-      <!-- Marcador Pedro -->
-      <div id="card-pedro" class="bg-slate-900 border-2 border-sky-500/40 rounded-2xl p-3 md:p-4 text-center relative overflow-hidden transition-all">
-        <div class="absolute top-0 left-0 w-full h-1 bg-sky-500"></div>
-        <h2 class="text-xl md:text-3xl font-black text-pedro uppercase tracking-wider">PEDRO</h2>
-        <div id="score-pedro" class="text-4xl md:text-6xl font-black my-1 text-white">0</div>
-        <div id="status-pedro" class="text-xs md:text-sm font-medium text-slate-400 h-6 flex items-center justify-center">
-          Esperando selección...
-        </div>
-      </div>
-
+      <button class="restart-btn" onclick="resetGame()">Jugar de Nuevo</button>
     </div>
-
-    <!-- Panel Central: Pregunta y Temporizador -->
-    <div id="main-panel" class="bg-slate-900 border border-slate-800 rounded-2xl p-4 md:p-6 relative shadow-xl">
-      
-      <!-- Temporizador visual -->
-      <div class="w-full bg-slate-800 h-2.5 rounded-full overflow-hidden mb-3 border border-slate-700/60">
-        <div id="timer-progress" class="h-full bg-slate-100 transition-all duration-100 ease-linear" style="width: 100%;"></div>
-      </div>
-
-      <div class="flex justify-between items-center text-xs text-slate-400 mb-2 font-medium">
-        <span id="category-tag" class="uppercase tracking-widest text-slate-300">HISTORIA DE CHILE</span>
-        <span id="timer-text" class="font-mono text-sm font-bold text-white">10.0s</span>
-        <span id="q-counter" class="text-slate-400">Pregunta 1</span>
-      </div>
-
-      <!-- Texto Pregunta -->
-      <h3 id="question-text" class="text-lg md:text-2xl font-bold text-white text-center min-h-[70px] flex items-center justify-center leading-snug px-2">
-        Cargando pregunta...
-      </h3>
-
-      <!-- Opciones (Opciones con badges de teclado para cada jugador) -->
-      <div id="options-container" class="grid grid-cols-1 md:grid-cols-2 gap-3 mt-4">
-        
-        <!-- Opción A -->
-        <div id="opt-box-0" class="opt-box bg-slate-800/80 border border-slate-700 p-3 rounded-xl flex items-center justify-between transition">
-          <div class="flex items-center gap-2">
-            <span class="font-bold text-slate-400 text-sm md:text-base">A)</span>
-            <span id="opt-text-0" class="text-sm md:text-base font-semibold text-white">---</span>
-          </div>
-          <div class="flex gap-1">
-            <span class="key-cap bg-pink-900/80 border border-pink-500/50 text-pink-200 text-xs font-bold px-2 py-1 rounded">W</span>
-            <span class="key-cap bg-sky-900/80 border border-sky-500/50 text-sky-200 text-xs font-bold px-2 py-1 rounded">↑</span>
-          </div>
-        </div>
-
-        <!-- Opción B -->
-        <div id="opt-box-1" class="opt-box bg-slate-800/80 border border-slate-700 p-3 rounded-xl flex items-center justify-between transition">
-          <div class="flex items-center gap-2">
-            <span class="font-bold text-slate-400 text-sm md:text-base">B)</span>
-            <span id="opt-text-1" class="text-sm md:text-base font-semibold text-white">---</span>
-          </div>
-          <div class="flex gap-1">
-            <span class="key-cap bg-pink-900/80 border border-pink-500/50 text-pink-200 text-xs font-bold px-2 py-1 rounded">A</span>
-            <span class="key-cap bg-sky-900/80 border border-sky-500/50 text-sky-200 text-xs font-bold px-2 py-1 rounded">←</span>
-          </div>
-        </div>
-
-        <!-- Opción C -->
-        <div id="opt-box-2" class="opt-box bg-slate-800/80 border border-slate-700 p-3 rounded-xl flex items-center justify-between transition">
-          <div class="flex items-center gap-2">
-            <span class="font-bold text-slate-400 text-sm md:text-base">C)</span>
-            <span id="opt-text-2" class="text-sm md:text-base font-semibold text-white">---</span>
-          </div>
-          <div class="flex gap-1">
-            <span class="key-cap bg-pink-900/80 border border-pink-500/50 text-pink-200 text-xs font-bold px-2 py-1 rounded">S</span>
-            <span class="key-cap bg-sky-900/80 border border-sky-500/50 text-sky-200 text-xs font-bold px-2 py-1 rounded">↓</span>
-          </div>
-        </div>
-
-        <!-- Opción D -->
-        <div id="opt-box-3" class="opt-box bg-slate-800/80 border border-slate-700 p-3 rounded-xl flex items-center justify-between transition">
-          <div class="flex items-center gap-2">
-            <span class="font-bold text-slate-400 text-sm md:text-base">D)</span>
-            <span id="opt-text-3" class="text-sm md:text-base font-semibold text-white">---</span>
-          </div>
-          <div class="flex gap-1">
-            <span class="key-cap bg-pink-900/80 border border-pink-500/50 text-pink-200 text-xs font-bold px-2 py-1 rounded">D</span>
-            <span class="key-cap bg-sky-900/80 border border-sky-500/50 text-sky-200 text-xs font-bold px-2 py-1 rounded">→</span>
-          </div>
-        </div>
-
-      </div>
-
-    </div>
-
-    <!-- Mandos Táctiles para Móvil / Controles en Pantalla -->
-    <div class="grid grid-cols-2 gap-3 md:gap-6 mt-1">
-      
-      <!-- Mandos Ame -->
-      <div class="bg-slate-900/80 border border-pink-500/30 rounded-2xl p-3">
-        <div class="text-xs font-bold text-ame text-center mb-2 uppercase tracking-wider">
-          Controles AME (WASD)
-        </div>
-        <div class="grid grid-cols-2 gap-2">
-          <button onclick="playerSelect('Ame', 0)" id="touch-ame-0" class="touch-ame bg-slate-800 hover:bg-pink-900/50 border border-pink-500/40 py-2.5 rounded-lg text-xs font-bold text-white active:scale-95 transition">
-            [W] Opción A
-          </button>
-          <button onclick="playerSelect('Ame', 1)" id="touch-ame-1" class="touch-ame bg-slate-800 hover:bg-pink-900/50 border border-pink-500/40 py-2.5 rounded-lg text-xs font-bold text-white active:scale-95 transition">
-            [A] Opción B
-          </button>
-          <button onclick="playerSelect('Ame', 2)" id="touch-ame-2" class="touch-ame bg-slate-800 hover:bg-pink-900/50 border border-pink-500/40 py-2.5 rounded-lg text-xs font-bold text-white active:scale-95 transition">
-            [S] Opción C
-          </button>
-          <button onclick="playerSelect('Ame', 3)" id="touch-ame-3" class="touch-ame bg-slate-800 hover:bg-pink-900/50 border border-pink-500/40 py-2.5 rounded-lg text-xs font-bold text-white active:scale-95 transition">
-            [D] Opción D
-          </button>
-        </div>
-      </div>
-
-      <!-- Mandos Pedro -->
-      <div class="bg-slate-900/80 border border-sky-500/30 rounded-2xl p-3">
-        <div class="text-xs font-bold text-pedro text-center mb-2 uppercase tracking-wider">
-          Controles PEDRO (Flechas)
-        </div>
-        <div class="grid grid-cols-2 gap-2">
-          <button onclick="playerSelect('Pedro', 0)" id="touch-pedro-0" class="touch-pedro bg-slate-800 hover:bg-sky-900/50 border border-sky-500/40 py-2.5 rounded-lg text-xs font-bold text-white active:scale-95 transition">
-            [↑] Opción A
-          </button>
-          <button onclick="playerSelect('Pedro', 1)" id="touch-pedro-1" class="touch-pedro bg-slate-800 hover:bg-sky-900/50 border border-sky-500/40 py-2.5 rounded-lg text-xs font-bold text-white active:scale-95 transition">
-            [←] Opción B
-          </button>
-          <button onclick="playerSelect('Pedro', 2)" id="touch-pedro-2" class="touch-pedro bg-slate-800 hover:bg-sky-900/50 border border-sky-500/40 py-2.5 rounded-lg text-xs font-bold text-white active:scale-95 transition">
-            [↓] Opción C
-          </button>
-          <button onclick="playerSelect('Pedro', 3)" id="touch-pedro-3" class="touch-pedro bg-slate-800 hover:bg-sky-900/50 border border-sky-500/40 py-2.5 rounded-lg text-xs font-bold text-white active:scale-95 transition">
-            [→] Opción D
-          </button>
-        </div>
-      </div>
-
-    </div>
-
-    <!-- Barra Inferior de Acciones -->
-    <div class="flex justify-between items-center mt-2 border-t border-slate-800 pt-3">
-      <div class="flex gap-2">
-        <button onclick="resetScores()" class="text-xs font-bold text-slate-400 hover:text-rose-400 uppercase tracking-wider px-3 py-1.5 rounded-lg border border-slate-800 hover:border-slate-700 transition">
-          Reset Puntos
-        </button>
-        <button onclick="toggleAudio()" id="audio-toggle-btn" class="text-xs font-bold text-slate-400 hover:text-amber-300 uppercase tracking-wider px-3 py-1.5 rounded-lg border border-slate-800 hover:border-slate-700 transition">
-          Sonido: ON
-        </button>
-      </div>
-
-      <button id="next-btn" onclick="nextQuestion()" class="bg-white text-slate-950 font-black px-5 py-2.5 rounded-xl hover:bg-slate-200 transition text-xs md:text-sm uppercase tracking-wider">
-        Siguiente Pregunta
-      </button>
-    </div>
-
-  </main>
-
-  <footer class="text-center text-xs text-slate-600 mt-4">
-    Ame vs Pedro Trivia Game • Desafío Simultáneo
-  </footer>
+  </div>
 
   <script>
-    // ==========================================
-    // SINTETIZADOR DE SONIDO (Web Audio API)
-    // ==========================================
-    let audioEnabled = true;
-    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-
-    function playSound(type) {
-      if (!audioEnabled) return;
-      if (audioCtx.state === 'suspended') audioCtx.resume();
-
-      const now = audioCtx.currentTime;
-
-      if (type === 'lock') {
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(440, now);
-        osc.frequency.exponentialRampToValueAtTime(660, now + 0.1);
-        gain.gain.setValueAtTime(0.15, now);
-        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
-        osc.connect(gain);
-        gain.connect(audioCtx.destination);
-        osc.start(now);
-        osc.stop(now + 0.1);
-      } else if (type === 'correct') {
-        [523.25, 659.25, 783.99].forEach((freq, idx) => {
-          const osc = audioCtx.createOscillator();
-          const gain = audioCtx.createGain();
-          osc.type = 'sine';
-          osc.frequency.setValueAtTime(freq, now + idx * 0.07);
-          gain.gain.setValueAtTime(0.15, now + idx * 0.07);
-          gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.07 + 0.2);
-          osc.connect(gain);
-          gain.connect(audioCtx.destination);
-          osc.start(now + idx * 0.07);
-          osc.stop(now + idx * 0.07 + 0.2);
-        });
-      } else if (type === 'wrong') {
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        osc.type = 'sawtooth';
-        osc.frequency.setValueAtTime(200, now);
-        osc.frequency.linearRampToValueAtTime(120, now + 0.25);
-        gain.gain.setValueAtTime(0.2, now);
-        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
-        osc.connect(gain);
-        gain.connect(audioCtx.destination);
-        osc.start(now);
-        osc.stop(now + 0.25);
-      }
-    }
-
-    function toggleAudio() {
-      audioEnabled = !audioEnabled;
-      document.getElementById('audio-toggle-btn').innerText = audioEnabled ? "Sonido: ON" : "Sonido: OFF";
-    }
-
-    // ==========================================
-    // BANCO DE PREGUNTAS (Nivel Exigente / Historia de Chile & Trivia)
-    // ==========================================
-    const questionBank = [
+    // 25 PREGUNTAS TOTALMENTE NUEVAS DE TRIVIA POP Y DIVERTIBA
+    const questions = [
       {
-        category: "Historia de Chile",
-        question: "¿En qué año se abolió definitivamente la esclavitud en Chile, convirtiéndose en el primer país de Hispanoamérica en hacerlo?",
-        options: ["1811", "1823", "1830", "1848"],
-        correct: 1
+        category: "Cine & Marvel",
+        question: "¿Cuál es el verdadero nombre de Spider-Man en la versión animada del 'Spider-Verse' que proviene de Brooklyn?",
+        answer: "Miles Morales"
       },
       {
-        category: "Historia de Chile",
-        question: "¿Qué presidente chileno promulgó la Constitución de 1925 tras el fin de la República Parlamentaria?",
-        options: ["Arturo Alessandri Palma", "Carlos Ibáñez del Campo", "Pedro Aguirre Cerda", "Jorge Alessandri"],
-        correct: 0
+        category: "Música Pop / Argentina",
+        question: "¿Qué icónica cantante argentina lanzó la canción viral 'Nathy Peluso: BZRP Music Sessions, Vol. 36'?",
+        answer: "Nathy Peluso"
       },
       {
-        category: "Trivia Histórica",
-        question: "¿Cuál fue la primera universidad fundada en territorio chileno durante la época colonial (1738)?",
-        options: ["Universidad de Chile", "Real Universidad de San Felipe", "Pontificia Universidad Católica", "Universidad de Concepción"],
-        correct: 1
+        category: "Series & Netflix",
+        question: "En la serie 'Stranger Things', ¿cuál es el nombre de la dimensión paralela y oscura donde habita el Demogorgon?",
+        answer: "El Upside Down (El Otro Lado / Mundo del Revés)"
       },
       {
-        category: "Leyes y Curiosidades",
-        question: "¿Qué moneda reemplazó temporalmente al Peso Chileno entre los años 1960 y 1975?",
-        options: ["El Escudo", "El Cóndor", "El Real Chileno", "El Sucre Chileno"],
-        correct: 0
+        category: "Naturaleza Curiosa",
+        question: "¿Qué animal marino no tiene cerebro, corazón, ni sangre, pero ha sobrevivido por más de 500 millones de años?",
+        answer: "La Medusa"
       },
       {
-        category: "Historia Militar y Batallas",
-        question: "¿En qué combate naval chileno de 1879 el blindado Cochrane capturó al monitor peruano Huáscar?",
-        options: ["Combate Naval de Iquique", "Combate Naval de Angamos", "Combate de Punta Gruesa", "Combate de Arica"],
-        correct: 1
+        category: "Música Urbana / Chile",
+        question: "¿Qué artista chileno de música urbana es conocido internacionalmente como 'El Rey del Reggaeton Chileno' o autor de 'Ultra Solo'?",
+        answer: "Polimá Westcoast / Cris Mj / Pailita (Se acepta Polimá Westcoast o Pailita)"
       },
       {
-        category: "Ciencia e Hitos Chilenos",
-        question: "¿Qué científico e intelectual chileno co-creó el famoso concepto biológico de 'Autopoiesis' junto a Humberto Maturana?",
-        options: ["Francisco Varela", "Claudio Naranjo", "Nicanor Parra", "Enrique Mac Iver"],
-        correct: 0
+        category: "Series & HBO",
+        question: "En la serie 'The Last of Us', ¿qué tipo de hongo causa la infección pandémica que transforma a los humanos?",
+        answer: "Cordyceps"
       },
       {
-        category: "Geografía Exigente",
-        question: "¿Cómo se llama el punto más austral del territorio continental de Chile (excluyendo la Antártica y las islas de Hornos)?",
-        options: ["Cabo de Hornos", "Punta Dungeness", "Cabo Froward", "Puerto Williams"],
-        correct: 2
+        category: "Gaming & Pop",
+        question: "¿Qué estudio de videojuegos desarrolló la famosa saga 'The Witcher' y 'Cyberpunk 2077'?",
+        answer: "CD Projekt Red"
       },
       {
-        category: "Cultura y Medios",
-        question: "¿Cuál fue el primer canal de televisión en realizar transmisiones en Chile en el año 1957?",
-        options: ["Canal 13 (UC)", "TVN", "UCV Televisión (Valparaíso)", "Chilevisión"],
-        correct: 2
+        category: "Cultura Pop / Disney",
+        question: "En la película 'Toy Story', ¿cuál es la frase célebre de combate que siempre dice Buzz Lightyear?",
+        answer: "'Al infinito y más allá'"
       },
       {
-        category: "Geografía de Chile",
-        question: "¿Cuál es el volcán activo más alto del mundo, ubicado en la Región de Atacama en la frontera entre Chile y Argentina?",
-        options: ["Ojos del Salado", "Volcán Villarrica", "Volcán Lascar", "Volcán Licancabur"],
-        correct: 0
+        category: "Chile Freak",
+        question: "¿En qué famosa playa de la Región de Valparaíso se encuentra el icónico reloj de flores inaugurado para el Mundial de 1962?",
+        answer: "Viña del Mar"
       },
       {
-        category: "Historia Política",
-        question: "¿Cuál fue el célebre lema del gobierno del Presidente Pedro Aguirre Cerda (Frente Popular, 1938)?",
-        options: ["Gobernar es educar", "Pan, Trabajo y Libertad", "Avanzar sin transar", "Crecimiento con equidad"],
-        correct: 0
+        category: "Cine & Terror",
+        question: "¿Cómo se llama la muñeca poseída que es la protagonista de la saga derivada del universo de 'El Conjuro'?",
+        answer: "Annabelle"
       },
       {
-        category: "Trivia Chilena",
-        question: "¿En qué año se fundó la ciudad de Santiago por Pedro de Valdivia?",
-        options: ["1536", "1541", "1550", "1588"],
-        correct: 1
+        category: "Música / Reggaeton",
+        question: "¿Qué famoso álbum histórico lanzado por Daddy Yankee en 2004 popularizó la canción 'Gasolina' en todo el planeta?",
+        answer: "Barrio Fino"
       },
       {
-        category: "Historia de Chile",
-        question: "¿Quién fue nombrada la primera alcaldesa de Santiago (y primera de una capital latinoamericana) en 1951?",
-        options: ["María de la Cruz", "Inés Enríquez Frödden", "María Teresa del Canto", "Amanda Labarca"],
-        correct: 2
+        category: "Naturaleza Curiosa",
+        question: "¿Qué animal es capaz de regenerar no solo su cola o extremidades, sino también partes de su corazón y cerebro?",
+        answer: "El Ajolote (Axolotl)"
       },
       {
-        category: "Cultura Pop Chilena",
-        question: "¿En qué histórico festival o evento debutó en televisión el personaje de Condorito en formato animado corto?",
-        options: ["Sábado Gigante", "Festival de Viña 1982", "Teletón 1980", "Jappening con Ja"],
-        correct: 0
+        category: "Series & Comedia",
+        question: "En la serie 'The Office' (EE.UU.), ¿en qué ciudad del estado de Pensilvania está ubicada la sucursal de Dunder Mifflin?",
+        answer: "Scranton"
       },
       {
-        category: "Historia Universal & Chile",
-        question: "Chile declaró oficialmente la guerra a Japón en la Segunda Guerra Mundial en el año:",
-        options: ["1939", "1941", "1945", "Nunca declaró la guerra"],
-        correct: 2
+        category: "Cultura General Pop",
+        question: "¿Qué famosa marca internacional de ropa deportiva tiene por logo un 'Swoosh' (la famosa flecha curva)?",
+        answer: "Nike"
       },
       {
-        category: "Música e Historia",
-        question: "¿En qué año fue estrenado por primera vez el actual Himno Nacional de Chile escrito por Eusebio Lillo?",
-        options: ["1818", "1847", "1879", "1910"],
-        correct: 1
+        category: "Cine & Animación",
+        question: "En la película 'Spirited Away' (El Viaje de Chihiro), ¿en qué animales son transformados los padres de Chihiro al principio?",
+        answer: "En Cerdos"
       },
       {
-        category: "Literatura Chilena",
-        question: "¿Qué célebre obra poética épica de 1569 narró las guerras entre españoles y mapuches en Chile?",
-        options: ["La Araucana (Alonso de Ercilla)", "El Cautiverio Feliz", "Desolación", "Canto General"],
-        correct: 0
+        category: "Chile / Modismos",
+        question: "Según el dicho popular chileno, cuando alguien anda 'pato', ¿qué le falta o qué le pasa?",
+        answer: "Le falta dinero / Está sin plata"
       },
       {
-        category: "Trivia de Transporte",
-        question: "¿En qué año se inauguró la primera línea comercial del Metro de Santiago (Línea 1, tramo San Pablo - La Moneda)?",
-        options: ["1970", "1975", "1980", "1982"],
-        correct: 1
+        category: "Música & K-Pop",
+        question: "¿Cuál es el nombre del grupo masculino de K-Pop más famoso del mundo integrado por 7 miembros (Jin, Suga, J-Hope, RM, Jimin, V, Jungkook)?",
+        answer: "BTS"
       },
       {
-        category: "Historia Patria",
-        question: "¿Cómo se llamó el tratado de paz definitivo suscrito en 1904 entre Chile y Bolivia?",
-        options: ["Tratado de Lima", "Tratado de Paz y Amistad", "Pacto de Tregua", "Tratado de Ancón"],
-        correct: 1
+        category: "Naturaleza & Ciencia",
+        question: "¿Qué porcentaje aproximado de la superficie del planeta Tierra está cubierta de agua?",
+        answer: "Aproximadamente el 71%"
       },
       {
-        category: "Cine y Archivo Chileno",
-        question: "¿Cuál es considerada la película argumental de ficción grabada en Chile más antigua que se conserva (1910)?",
-        options: ["El Chacal de Nahueltoro", "El Húsar de la Muerte", "Manuel Rodríguez", "Un paseo por el Parque Cousiño"],
-        correct: 1
+        category: "Cultura Pop / Anime",
+        question: "En 'Dragon Ball Z', ¿de qué planeta proviene la raza de los Saiyajin a la que pertenecen Goku y Vegeta?",
+        answer: "Planeta Vegeta (o Planeta Plant)"
       },
       {
-        category: "Historia Territorial",
-        question: "¿En qué año firmó Chile el Tratado de Límites con Argentina en el que renunció a los derechos sobre la Patagonia oriental?",
-        options: ["1879", "1881", "1899", "1902"],
-        correct: 1
+        category: "Gaming & Internet",
+        question: "¿En qué año se lanzó globalmente el fenómeno del juego para móviles 'Pokémon GO' que sacó a todos a la calle?",
+        answer: "2016"
+      },
+      {
+        category: "Cine & Hollywood",
+        question: "¿Qué película ganó el premio Oscar a Mejor Película en 2024 dirigida por Christopher Nolan sobre el creador de la bomba atómica?",
+        answer: "Oppenheimer"
+      },
+      {
+        category: "Cultura Chilena / TV",
+        question: "¿En qué programa infantil de marionetas se emitió por primera vez la canción 'Lala' de Lino y los Huipas?",
+        answer: "31 Minutos"
+      },
+      {
+        category: "Series & Netflix",
+        question: "¿En qué país asiático se desarrolla la historia de la exitosa serie 'El Juego del Calamar' (Squid Game)?",
+        answer: "Corea del Sur"
+      },
+      {
+        category: "Música Pop Mundial",
+        question: "¿Qué cantante británica de pop lanzó los álbumes titulados con números '19', '21', '25' y '30'?",
+        answer: "Adele"
+      },
+      {
+        category: "Datos Curiosos",
+        question: "¿Cuál es el único alimento natural que nunca se echa a perder y puede durar miles de años intacto?",
+        answer: "La Miel"
       }
     ];
 
-    function shuffleArray(arr) {
-      for (let i = arr.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [arr[i], arr[j]] = [arr[j], arr[i]];
-      }
-      return arr;
+    let currentIndex = 0;
+    let scoreAme = 0;
+    let scorePedro = 0;
+
+    // Guardar puntos por cada tarjeta individual
+    let cardScores = Array(questions.length).fill(null).map((_, i) => ({
+      ame: 0,
+      pedro: 0,
+      category: questions[i].category
+    }));
+
+    function updateCardUI() {
+      const q = questions[currentIndex];
+      document.getElementById('card-tracker').innerText = `TARJETA ${currentIndex + 1} DE ${questions.length}`;
+      document.getElementById('card-category').innerText = q.category;
+      document.getElementById('card-question').innerText = q.question;
+
+      // SOLUCIÓN A SPOILERS: Ocultar texto de respuesta hasta que la tarjeta gire
+      const answerEl = document.getElementById('card-answer');
+      answerEl.style.visibility = 'hidden';
+      answerEl.innerText = q.answer;
+
+      // Asegurar que la tarjeta comience siempre en la cara frontal
+      document.getElementById('flashcard').classList.remove('flipped');
+
+      // Actualizar contadores locales de la tarjeta
+      document.getElementById('card-point-ame').innerText = `Tarjeta: ${cardScores[currentIndex].ame} pt`;
+      document.getElementById('card-point-pedro').innerText = `Tarjeta: ${cardScores[currentIndex].pedro} pt`;
+
+      // Habilitar / Deshabilitar botones de navegación
+      document.getElementById('btn-prev').disabled = currentIndex === 0;
+      document.getElementById('btn-next').disabled = currentIndex === questions.length - 1;
     }
 
-    // ==========================================
-    // ESTADO DEL JUEGO
-    // ==========================================
-    let questions = shuffleArray([...questionBank]);
-    let currentQIdx = -1;
-    let ameScore = 0;
-    let pedroScore = 0;
+    function flipCard() {
+      const card = document.getElementById('flashcard');
+      card.classList.toggle('flipped');
 
-    let ameChoice = null;   // null o 0,1,2,3
-    let pedroChoice = null; // null o 0,1,2,3
-
-    let roundActive = false;
-    let timerInterval = null;
-    let timeLeft = 10.0;
-    const ROUND_TIME = 10.0;
-
-    // Escuchar Teclado para Controles Simultáneos
-    document.addEventListener('keydown', (e) => {
-      if (!roundActive) return;
-
-      const key = e.key;
-
-      // CONTROLES AME: W (0), A (1), S (2), D (3)
-      if (ameChoice === null) {
-        if (key === 'w' || key === 'W') playerSelect('Ame', 0);
-        else if (key === 'a' || key === 'A') playerSelect('Ame', 1);
-        else if (key === 's' || key === 'S') playerSelect('Ame', 2);
-        else if (key === 'd' || key === 'D') playerSelect('Ame', 3);
-      }
-
-      // CONTROLES PEDRO: ArrowUp (0), ArrowLeft (1), ArrowDown (2), ArrowRight (3)
-      if (pedroChoice === null) {
-        if (key === 'ArrowUp') playerSelect('Pedro', 0);
-        else if (key === 'ArrowLeft') playerSelect('Pedro', 1);
-        else if (key === 'ArrowDown') playerSelect('Pedro', 2);
-        else if (key === 'ArrowRight') playerSelect('Pedro', 3);
-      }
-    });
-
-    function nextQuestion() {
-      clearInterval(timerInterval);
-      currentQIdx++;
-
-      if (currentQIdx >= questions.length) {
-        questions = shuffleArray([...questionBank]);
-        currentQIdx = 0;
-      }
-
-      const q = questions[currentQIdx];
-
-      // Reset Estados
-      ameChoice = null;
-      pedroChoice = null;
-      roundActive = true;
-      timeLeft = ROUND_TIME;
-
-      // Limpiar UI
-      document.getElementById('category-tag').innerText = q.category;
-      document.getElementById('q-counter').innerText = `Pregunta ${currentQIdx + 1}/${questions.length}`;
-      document.getElementById('question-text').innerText = q.question;
-
-      document.getElementById('status-ame').innerText = "Esperando selección...";
-      document.getElementById('status-ame').className = "text-xs md:text-sm font-medium text-slate-400 h-6 flex items-center justify-center";
-      document.getElementById('status-pedro').innerText = "Esperando selección...";
-      document.getElementById('status-pedro').className = "text-xs md:text-sm font-medium text-slate-400 h-6 flex items-center justify-center";
-
-      document.getElementById('card-ame').className = "bg-slate-900 border-2 border-pink-500/40 rounded-2xl p-3 md:p-4 text-center relative overflow-hidden transition-all";
-      document.getElementById('card-pedro').className = "bg-slate-900 border-2 border-sky-500/40 rounded-2xl p-3 md:p-4 text-center relative overflow-hidden transition-all";
-
-      // Reset Opciones
-      for (let i = 0; i < 4; i++) {
-        document.getElementById(`opt-text-${i}`).innerText = q.options[i];
-        const box = document.getElementById(`opt-box-${i}`);
-        box.className = "opt-box bg-slate-800/80 border border-slate-700 p-3 rounded-xl flex items-center justify-between transition";
-        
-        // Habilitar botones táctiles
-        document.getElementById(`touch-ame-${i}`).disabled = false;
-        document.getElementById(`touch-ame-${i}`).className = "touch-ame bg-slate-800 hover:bg-pink-900/50 border border-pink-500/40 py-2.5 rounded-lg text-xs font-bold text-white active:scale-95 transition";
-        document.getElementById(`touch-pedro-${i}`).disabled = false;
-        document.getElementById(`touch-pedro-${i}`).className = "touch-pedro bg-slate-800 hover:bg-sky-900/50 border border-sky-500/40 py-2.5 rounded-lg text-xs font-bold text-white active:scale-95 transition";
-      }
-
-      startTimer();
-    }
-
-    function startTimer() {
-      const timerProgress = document.getElementById('timer-progress');
-      const timerText = document.getElementById('timer-text');
-
-      timerProgress.style.width = '100%';
-      timerText.innerText = `${ROUND_TIME.toFixed(1)}s`;
-
-      const startTime = Date.now();
-
-      timerInterval = setInterval(() => {
-        const elapsed = (Date.now() - startTime) / 1000;
-        timeLeft = Math.max(0, ROUND_TIME - elapsed);
-
-        const pct = (timeLeft / ROUND_TIME) * 100;
-        timerProgress.style.width = `${pct}%`;
-        timerText.innerText = `${timeLeft.toFixed(1)}s`;
-
-        if (timeLeft <= 0) {
-          clearInterval(timerInterval);
-          finishRound();
-        }
-      }, 50);
-    }
-
-    function playerSelect(player, choiceIndex) {
-      if (!roundActive) return;
-
-      playSound('lock');
-
-      if (player === 'Ame' && ameChoice === null) {
-        ameChoice = choiceIndex;
-        // Muestra genérica sin indicar la opción elegida para evitar que el rival copie
-        document.getElementById('status-ame').innerText = "SELECCIÓN GUARDADA";
-        document.getElementById('status-ame').className = "text-xs md:text-sm font-bold text-pink-400 h-6 flex items-center justify-center bg-pink-950/40 border border-pink-500/30 rounded-lg px-2";
-        
-        // Bloquear botones táctiles de Ame neutramente
-        for (let i = 0; i < 4; i++) {
-          const b = document.getElementById(`touch-ame-${i}`);
-          b.disabled = true;
-          b.className = "touch-ame bg-slate-800/40 border border-slate-800 py-2.5 rounded-lg text-xs font-medium text-slate-600 transition opacity-50";
-        }
-      }
-
-      if (player === 'Pedro' && pedroChoice === null) {
-        pedroChoice = choiceIndex;
-        // Muestra genérica sin indicar la opción elegida para evitar que el rival copie
-        document.getElementById('status-pedro').innerText = "SELECCIÓN GUARDADA";
-        document.getElementById('status-pedro').className = "text-xs md:text-sm font-bold text-sky-400 h-6 flex items-center justify-center bg-sky-950/40 border border-sky-500/30 rounded-lg px-2";
-
-        // Bloquear botones táctiles de Pedro neutramente
-        for (let i = 0; i < 4; i++) {
-          const b = document.getElementById(`touch-pedro-${i}`);
-          b.disabled = true;
-          b.className = "touch-pedro bg-slate-800/40 border border-slate-800 py-2.5 rounded-lg text-xs font-medium text-slate-600 transition opacity-50";
-        }
-      }
-
-      // Si ambos responden antes de tiempo, terminar la ronda inmediatamente
-      if (ameChoice !== null && pedroChoice !== null) {
-        clearInterval(timerInterval);
-        finishRound();
-      }
-    }
-
-    function finishRound() {
-      roundActive = false;
-      const q = questions[currentQIdx];
-      const correctIdx = q.correct;
-      const letterNames = ["A", "B", "C", "D"];
-
-      // Resaltar la respuesta correcta en el panel principal
-      const correctBox = document.getElementById(`opt-box-${correctIdx}`);
-      correctBox.className = "opt-box bg-emerald-950 border-2 border-emerald-400 p-3 rounded-xl flex items-center justify-between transition";
-
-      let ameCorrect = (ameChoice === correctIdx);
-      let pedroCorrect = (pedroChoice === correctIdx);
-
-      // Evaluar Ame y revelar su elección
-      if (ameChoice === null) {
-        ameScore -= 1;
-        document.getElementById('status-ame').innerText = "SIN RESPONDER (-1 pt)";
-        document.getElementById('status-ame').className = "text-xs md:text-sm font-bold text-rose-400 h-6 flex items-center justify-center";
-      } else if (ameCorrect) {
-        ameScore += 1;
-        document.getElementById('status-ame').innerText = `Elegió (${letterNames[ameChoice]}): CORRECTO (+1 pt)`;
-        document.getElementById('status-ame').className = "text-xs md:text-sm font-bold text-emerald-400 h-6 flex items-center justify-center";
+      // Mostrar texto de la respuesta solo al voltear para evitar destellos
+      const answerEl = document.getElementById('card-answer');
+      if (card.classList.contains('flipped')) {
+        setTimeout(() => {
+          answerEl.style.visibility = 'visible';
+        }, 150);
       } else {
-        ameScore -= 1;
-        document.getElementById('status-ame').innerText = `Elegió (${letterNames[ameChoice]}): INCORRECTO (-1 pt)`;
-        document.getElementById('status-ame').className = "text-xs md:text-sm font-bold text-rose-400 h-6 flex items-center justify-center";
+        answerEl.style.visibility = 'hidden';
       }
+    }
 
-      // Evaluar Pedro y revelar su elección
-      if (pedroChoice === null) {
-        pedroScore -= 1;
-        document.getElementById('status-pedro').innerText = "SIN RESPONDER (-1 pt)";
-        document.getElementById('status-pedro').className = "text-xs md:text-sm font-bold text-rose-400 h-6 flex items-center justify-center";
-      } else if (pedroCorrect) {
-        pedroScore += 1;
-        document.getElementById('status-pedro').innerText = `Elegió (${letterNames[pedroChoice]}): CORRECTO (+1 pt)`;
-        document.getElementById('status-pedro').className = "text-xs md:text-sm font-bold text-emerald-400 h-6 flex items-center justify-center";
+    function addPoint(player, amount, event) {
+      if (event) event.stopPropagation(); // Previene voltear la tarjeta al hacer clic en +1/-1
+
+      if (player === 'ame') {
+        cardScores[currentIndex].ame += amount;
+        scoreAme += amount;
+        document.getElementById('status-ame').innerText = "✓ Registro Guardado";
       } else {
-        pedroScore -= 1;
-        document.getElementById('status-pedro').innerText = `Elegió (${letterNames[pedroChoice]}): INCORRECTO (-1 pt)`;
-        document.getElementById('status-pedro').className = "text-xs md:text-sm font-bold text-rose-400 h-6 flex items-center justify-center";
+        cardScores[currentIndex].pedro += amount;
+        scorePedro += amount;
+        document.getElementById('status-pedro').innerText = "✓ Registro Guardado";
       }
 
-      // Sonidos y confeti
-      if (ameCorrect || pedroCorrect) {
-        playSound('correct');
-        confetti({
-          particleCount: 40,
-          spread: 60,
-          origin: { y: 0.8 }
-        });
+      // Actualizar contador individual de tarjeta
+      document.getElementById('card-point-ame').innerText = `Tarjeta: ${cardScores[currentIndex].ame} pt`;
+      document.getElementById('card-point-pedro').innerText = `Tarjeta: ${cardScores[currentIndex].pedro} pt`;
+    }
+
+    function nextCard() {
+      if (currentIndex < questions.length - 1) {
+        currentIndex++;
+        updateCardUI();
+      }
+    }
+
+    function prevCard() {
+      if (currentIndex > 0) {
+        currentIndex--;
+        updateCardUI();
+      }
+    }
+
+    function showResults() {
+      const modal = document.getElementById('results-modal');
+      const winnerText = document.getElementById('winner-announcement');
+      const analysisText = document.getElementById('analysis-text');
+
+      // Revelación de Ganador
+      if (scoreAme > scorePedro) {
+        winnerText.innerHTML = `<span style="color:#ff70a6;">¡AME ES LA GANADORA!</span><br><small style="font-size:1rem; color:#ffffff;">Ame: ${scoreAme} pts vs Pedro: ${scorePedro} pts</small>`;
+      } else if (scorePedro > scoreAme) {
+        winnerText.innerHTML = `<span style="color:#70d6ff;">¡PEDRO ES EL GANADOR!</span><br><small style="font-size:1rem; color:#ffffff;">Pedro: ${scorePedro} pts vs Ame: ${scoreAme} pts</small>`;
       } else {
-        playSound('wrong');
+        winnerText.innerHTML = `<span style="color:#ffffff;">¡EMPATE TÁCTICO!</span><br><small style="font-size:1rem; color:#ffffff;">Ambos obtuvieron ${scoreAme} pts</small>`;
       }
 
-      updateScores();
-    }
+      // Agrupar puntos por categoría
+      const stats = {};
+      cardScores.forEach(item => {
+        if (!stats[item.category]) {
+          stats[item.category] = { ame: 0, pedro: 0 };
+        }
+        stats[item.category].ame += item.ame;
+        stats[item.category].pedro += item.pedro;
+      });
 
-    function updateScores() {
-      const ameEl = document.getElementById('score-ame');
-      const pedroEl = document.getElementById('score-pedro');
+      let categoryAnalysisHTML = "";
+      for (const [cat, scores] of Object.entries(stats)) {
+        let domain = "Nivel Parejo";
+        if (scores.ame > scores.pedro) domain = "<span style='color:#ff70a6;'>Dominado por Ame</span>";
+        else if (scores.pedro > scores.ame) domain = "<span style='color:#70d6ff;'>Dominado por Pedro</span>";
 
-      ameEl.innerText = ameScore;
-      pedroEl.innerText = pedroScore;
-
-      ameEl.className = `text-4xl md:text-6xl font-black my-1 ${ameScore < 0 ? 'text-rose-400' : 'text-white'}`;
-      pedroEl.className = `text-4xl md:text-6xl font-black my-1 ${pedroScore < 0 ? 'text-rose-400' : 'text-white'}`;
-    }
-
-    function resetScores() {
-      if (confirm("¿Reiniciar el puntaje de Ame y Pedro a 0?")) {
-        ameScore = 0;
-        pedroScore = 0;
-        updateScores();
+        categoryAnalysisHTML += `
+          <div style="margin-bottom: 10px; font-size: 0.9rem; display:flex; justify-content:space-between; border-bottom: 1px solid #1a1e2b; padding-bottom: 4px;">
+            <strong>${cat}:</strong>
+            <span>${domain} (${scores.ame} vs ${scores.pedro})</span>
+          </div>
+        `;
       }
+
+      analysisText.innerHTML = `
+        <div style="margin-bottom: 15px;">
+          ${categoryAnalysisHTML}
+        </div>
+        <p style="font-size:0.85rem; color:#a0a5b5; line-height: 1.5;">
+          ${scoreAme > scorePedro ? 'Ame demostró superioridad en las preguntas de cultura pop y series.' : scorePedro > scoreAme ? 'Pedro se quedó con la victoria dominando los datos curiosos y el cine.' : 'Una batalla sumamente pareja en todas las áreas de la trivia.'}
+        </p>
+      `;
+
+      modal.classList.add('active');
     }
 
-    window.onload = () => {
-      nextQuestion();
-    };
+    function resetGame() {
+      currentIndex = 0;
+      scoreAme = 0;
+      scorePedro = 0;
+      cardScores = Array(questions.length).fill(null).map((_, i) => ({
+        ame: 0,
+        pedro: 0,
+        category: questions[i].category
+      }));
+
+      document.getElementById('status-ame').innerText = "Puntos Ocultos";
+      document.getElementById('status-pedro').innerText = "Puntos Ocultos";
+      document.getElementById('results-modal').classList.remove('active');
+      updateCardUI();
+    }
+
+    // Inicializar primera tarjeta
+    updateCardUI();
   </script>
 </body>
 </html>
