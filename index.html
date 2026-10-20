@@ -1,9 +1,10 @@
+```html
 <!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Trivia Flashcards: Ame vs Pedro</title>
+  <title>Trivia Flashcards Infinitas: Ame vs Pedro</title>
   <style>
     * {
       box-sizing: border-box;
@@ -22,71 +23,189 @@
       padding: 20px 15px;
     }
 
-    /* HEADER & SCOREBOARD */
-    header {
+    /* SETUP SCREEN */
+    .setup-card {
+      background: #161820;
+      border: 1px solid #2a2d3d;
+      border-radius: 16px;
+      padding: 30px;
       width: 100%;
-      max-width: 650px;
+      max-width: 550px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+      margin-top: 20px;
+    }
+
+    .setup-title {
+      font-size: 1.5rem;
+      font-weight: 800;
+      letter-spacing: 2px;
+      text-transform: uppercase;
       text-align: center;
       margin-bottom: 20px;
+      color: #ffffff;
+    }
+
+    .setup-subtitle {
+      font-size: 0.85rem;
+      color: #a0a5b5;
+      text-align: center;
+      margin-bottom: 25px;
+      letter-spacing: 1px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #a0a5b5;
+      margin-bottom: 8px;
+    }
+
+    .input-text {
+      width: 100%;
+      padding: 12px 15px;
+      background: #0d0e12;
+      border: 1px solid #33394f;
+      border-radius: 8px;
+      color: #ffffff;
+      font-size: 1rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .input-text:focus {
+      border-color: #ff70a6;
+    }
+
+    .color-picker-row {
+      display: flex;
+      gap: 10px;
+      margin-top: 8px;
+    }
+
+    .color-opt {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition: transform 0.15s;
+    }
+
+    .color-opt:hover {
+      transform: scale(1.1);
+    }
+
+    .color-opt.selected {
+      border-color: #ffffff;
+      transform: scale(1.15);
+    }
+
+    .player-setup-box {
+      background: #0d0e12;
+      padding: 15px;
+      border-radius: 10px;
+      border: 1px solid #252938;
+      margin-bottom: 15px;
+    }
+
+    .btn-start {
+      width: 100%;
+      padding: 16px;
+      background: #ff70a6;
+      color: #0d0e12;
+      border: none;
+      border-radius: 10px;
+      font-size: 1.1rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      cursor: pointer;
+      transition: transform 0.15s, background 0.2s;
+      margin-top: 10px;
+    }
+
+    .btn-start:hover {
+      background: #ff85b3;
+    }
+
+    .btn-start:active {
+      transform: scale(0.98);
+    }
+
+    /* LOADING SPINNER */
+    .loading-status {
+      display: none;
+      text-align: center;
+      margin-top: 15px;
+      font-size: 0.9rem;
+      color: #70d6ff;
+      font-weight: 600;
+    }
+
+    /* GAME INTERFACE */
+    .game-interface {
+      width: 100%;
+      max-width: 650px;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    header {
+      width: 100%;
+      text-align: center;
+      margin-bottom: 25px;
     }
 
     h1 {
       font-size: 1.4rem;
-      font-weight: 800;
+      font-weight: 700;
       letter-spacing: 2px;
       text-transform: uppercase;
       color: #ffffff;
-      margin-bottom: 12px;
+      margin-bottom: 15px;
     }
 
     .scoreboard {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 15px;
-      margin-bottom: 10px;
+      margin-bottom: 15px;
     }
 
     .player-card {
       background: #161820;
       border-radius: 12px;
-      padding: 12px 15px;
+      padding: 15px;
       text-align: center;
       border: 1px solid #2a2d3d;
-      position: relative;
-    }
-
-    .player-ame {
-      border-top: 4px solid #ff70a6;
-    }
-
-    .player-pedro {
-      border-top: 4px solid #70d6ff;
     }
 
     .player-name {
       font-size: 1.1rem;
-      font-weight: 700;
+      font-weight: 800;
       text-transform: uppercase;
       letter-spacing: 1px;
     }
 
-    .player-ame .player-name { color: #ff70a6; }
-    .player-pedro .player-name { color: #70d6ff; }
-
-    /* MODO SECRETO: El marcador total permanece oculto */
-    .player-status-secret {
-      font-size: 0.85rem;
-      font-weight: 600;
-      color: #828a9e;
-      margin-top: 6px;
-      letter-spacing: 1px;
-      text-transform: uppercase;
+    .secret-score {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: #70778b;
+      margin-top: 8px;
+      letter-spacing: 2px;
     }
 
     /* CARDS CONTAINER */
     .deck-container {
       width: 100%;
-      max-width: 650px;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -96,18 +215,16 @@
       font-size: 0.85rem;
       color: #a0a5b5;
       margin-bottom: 12px;
-      letter-spacing: 1.5px;
+      letter-spacing: 1px;
       text-transform: uppercase;
-      font-weight: 600;
     }
 
-    /* FLASHCARD PERSPECTIVE & FLIP */
     .flashcard-wrapper {
       width: 100%;
-      height: 310px;
+      height: 320px;
       perspective: 1000px;
       cursor: pointer;
-      margin-bottom: 18px;
+      margin-bottom: 20px;
     }
 
     .flashcard {
@@ -115,7 +232,7 @@
       height: 100%;
       position: relative;
       transform-style: preserve-3d;
-      transition: transform 0.5s cubic-bezier(0.4, 0.2, 0.2, 1);
+      transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
       border-radius: 16px;
     }
 
@@ -128,7 +245,6 @@
       width: 100%;
       height: 100%;
       backface-visibility: hidden;
-      -webkit-backface-visibility: hidden;
       border-radius: 16px;
       padding: 25px;
       display: flex;
@@ -143,8 +259,8 @@
 
     .card-back {
       transform: rotateY(180deg);
-      background: #191c28;
-      border-color: #31374a;
+      background: #1c202d;
+      border-color: #3b4158;
     }
 
     .category-badge {
@@ -152,7 +268,7 @@
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 2px;
-      padding: 6px 14px;
+      padding: 6px 12px;
       border-radius: 20px;
       background: #252938;
       color: #e0e6ed;
@@ -166,8 +282,17 @@
       margin: auto 0;
     }
 
+    /* PREVENCIÓN DE SPOILERS */
     .card-back .card-content {
       color: #70d6ff;
+      visibility: hidden;
+      opacity: 0;
+      transition: opacity 0.2s ease 0.3s;
+    }
+
+    .flashcard.flipped .card-back .card-content {
+      visibility: visible;
+      opacity: 1;
     }
 
     .card-hint {
@@ -177,24 +302,24 @@
       letter-spacing: 1px;
     }
 
-    /* CONTROLES POR TARJETA DE PUNTOS */
+    /* CONTROLES PUNTOS */
     .card-actions {
       width: 100%;
       background: #161820;
       border: 1px solid #2a2d3d;
       border-radius: 12px;
-      padding: 14px;
+      padding: 15px;
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 15px;
-      margin-bottom: 18px;
+      margin-bottom: 20px;
     }
 
     .scoring-group {
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 6px;
+      gap: 8px;
     }
 
     .scoring-label {
@@ -203,9 +328,6 @@
       letter-spacing: 1px;
       text-transform: uppercase;
     }
-
-    .group-ame .scoring-label { color: #ff70a6; }
-    .group-pedro .scoring-label { color: #70d6ff; }
 
     .btn-row {
       display: flex;
@@ -229,19 +351,16 @@
       transform: scale(0.95);
     }
 
-    .btn-ame-add { background: #ff70a6; color: #0d0e12; }
-    .btn-ame-sub { background: #3d1e2b; color: #ff70a6; }
-    
-    .btn-pedro-add { background: #70d6ff; color: #0d0e12; }
-    .btn-pedro-sub { background: #1c3543; color: #70d6ff; }
+    .btn-sub { background: #252938; color: #a0a5b5; }
 
-    .card-point-status {
-      font-size: 0.75rem;
+    .card-history {
+      font-size: 0.8rem;
+      font-weight: 600;
       color: #828a9e;
-      margin-top: 2px;
+      margin-top: 4px;
     }
 
-    /* NAVIGATION BUTTONS */
+    /* NAVEGACIÓN */
     .nav-controls {
       display: flex;
       gap: 12px;
@@ -263,25 +382,16 @@
       transition: background 0.2s ease;
     }
 
-    .nav-btn:hover {
-      background: #2b3044;
-    }
-
-    .nav-btn:disabled {
-      opacity: 0.3;
-      cursor: not-allowed;
-    }
+    .nav-btn:hover { background: #2b3044; }
+    .nav-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
     .finish-btn {
       background: #2e7d32;
       border-color: #388e3c;
     }
+    .finish-btn:hover { background: #388e3c; }
 
-    .finish-btn:hover {
-      background: #388e3c;
-    }
-
-    /* ANALYTICS MODAL */
+    /* MODAL */
     .modal-overlay {
       position: fixed;
       top: 0;
@@ -309,7 +419,7 @@
       background: #161820;
       border: 1px solid #33394f;
       border-radius: 16px;
-      padding: 28px;
+      padding: 30px;
       max-width: 550px;
       width: 100%;
       max-height: 90vh;
@@ -322,14 +432,14 @@
       font-weight: 800;
       text-transform: uppercase;
       margin-bottom: 20px;
-      letter-spacing: 1.5px;
+      letter-spacing: 1px;
     }
 
     .winner-announcement {
-      font-size: 1.3rem;
+      font-size: 1.4rem;
       font-weight: 700;
-      padding: 16px;
-      border-radius: 12px;
+      padding: 15px;
+      border-radius: 10px;
       background: #202433;
       margin-bottom: 20px;
     }
@@ -338,13 +448,13 @@
       text-align: left;
       background: #0d0e12;
       padding: 18px;
-      border-radius: 12px;
+      border-radius: 10px;
       margin-bottom: 20px;
       border: 1px solid #252938;
     }
 
     .analysis-section h3 {
-      font-size: 0.9rem;
+      font-size: 0.95rem;
       text-transform: uppercase;
       color: #a0a5b5;
       margin-bottom: 12px;
@@ -368,288 +478,297 @@
 </head>
 <body>
 
-  <header>
-    <h1>TRIVIA FLASHCARDS</h1>
-    <div class="scoreboard">
-      <div class="player-card player-ame">
-        <div class="player-name">AME</div>
-        <div class="player-status-secret" id="status-ame">Puntos Ocultos</div>
-      </div>
-      <div class="player-card player-pedro">
-        <div class="player-name">PEDRO</div>
-        <div class="player-status-secret" id="status-pedro">Puntos Ocultos</div>
-      </div>
-    </div>
-  </header>
+  <!-- PANTALLA DE INICIO Y CONFIGURACIÓN -->
+  <div class="setup-card" id="setup-screen">
+    <div class="setup-title">CONFIGURAR PARTIDA</div>
+    <div class="setup-subtitle">Preguntas Infinitas desde la Nube</div>
 
-  <div class="deck-container">
-    <div class="card-tracker" id="card-tracker">TARJETA 1 DE 25</div>
-
-    <div class="flashcard-wrapper" onclick="flipCard()">
-      <div class="flashcard" id="flashcard">
-        <!-- FRONT -->
-        <div class="card-face card-front">
-          <span class="category-badge" id="card-category">CATEGORÍA</span>
-          <div class="card-content" id="card-question">Cargando pregunta...</div>
-          <div class="card-hint">Toca la tarjeta para darla vuelta</div>
-        </div>
-        <!-- BACK -->
-        <div class="card-face card-back">
-          <span class="category-badge">RESPUESTA</span>
-          <div class="card-content" id="card-answer" style="visibility: hidden;">Cargando...</div>
-          <div class="card-hint">Toca para volver a la pregunta</div>
+    <!-- JUGADOR 1 -->
+    <div class="player-setup-box">
+      <div class="form-group">
+        <label>Jugador 1 (Nombre)</label>
+        <input type="text" class="input-text" id="p1-name-input" value="Ame">
+      </div>
+      <div class="form-group" style="margin-bottom: 0;">
+        <label>Color</label>
+        <div class="color-picker-row" id="p1-colors">
+          <div class="color-opt selected" style="background:#ff70a6;" data-color="#ff70a6"></div>
+          <div class="color-opt" style="background:#70d6ff;" data-color="#70d6ff"></div>
+          <div class="color-opt" style="background:#a06cd5;" data-color="#a06cd5"></div>
+          <div class="color-opt" style="background:#ff9f1c;" data-color="#ff9f1c"></div>
+          <div class="color-opt" style="background:#2ec4b6;" data-color="#2ec4b6"></div>
         </div>
       </div>
     </div>
 
-    <!-- PUNTOS POR TARJETA -->
-    <div class="card-actions">
-      <div class="scoring-group group-ame">
-        <div class="scoring-label">AME</div>
-        <div class="btn-row">
-          <button class="score-btn btn-ame-sub" onclick="addPoint('ame', -1, event)">-1</button>
-          <button class="score-btn btn-ame-add" onclick="addPoint('ame', 1, event)">+1</button>
-        </div>
-        <div class="card-point-status" id="card-point-ame">Tarjeta: 0 pt</div>
+    <!-- JUGADOR 2 -->
+    <div class="player-setup-box">
+      <div class="form-group">
+        <label>Jugador 2 (Nombre)</label>
+        <input type="text" class="input-text" id="p2-name-input" value="Pedro">
       </div>
-
-      <div class="scoring-group group-pedro">
-        <div class="scoring-label">PEDRO</div>
-        <div class="btn-row">
-          <button class="score-btn btn-pedro-sub" onclick="addPoint('pedro', -1, event)">-1</button>
-          <button class="score-btn btn-pedro-add" onclick="addPoint('pedro', 1, event)">+1</button>
+      <div class="form-group" style="margin-bottom: 0;">
+        <label>Color</label>
+        <div class="color-picker-row" id="p2-colors">
+          <div class="color-opt" style="background:#ff70a6;" data-color="#ff70a6"></div>
+          <div class="color-opt selected" style="background:#70d6ff;" data-color="#70d6ff"></div>
+          <div class="color-opt" style="background:#a06cd5;" data-color="#a06cd5"></div>
+          <div class="color-opt" style="background:#ff9f1c;" data-color="#ff9f1c"></div>
+          <div class="color-opt" style="background:#2ec4b6;" data-color="#2ec4b6"></div>
         </div>
-        <div class="card-point-status" id="card-point-pedro">Tarjeta: 0 pt</div>
       </div>
     </div>
 
-    <!-- NAVEGACIÓN -->
-    <div class="nav-controls">
-      <button class="nav-btn" id="btn-prev" onclick="prevCard()" disabled>Anterior</button>
-      <button class="nav-btn" id="btn-next" onclick="nextCard()">Siguiente</button>
-      <button class="nav-btn finish-btn" onclick="showResults()">Ver Ganador</button>
+    <button class="btn-start" id="start-btn" onclick="startGame()">¡Iniciar Nuevo Juego!</button>
+    <div class="loading-status" id="loading-status">Cargando preguntas frescas desde internet...</div>
+  </div>
+
+
+  <!-- INTERFAZ PRINCIPAL DE JUEGO -->
+  <div class="game-interface" id="game-interface">
+    <header>
+      <h1>TRIVIA FLASHCARDS</h1>
+      <div class="scoreboard">
+        <div class="player-card" id="card-p1">
+          <div class="player-name" id="display-p1-name">AME</div>
+          <div class="secret-score">??? PTS</div>
+        </div>
+        <div class="player-card" id="card-p2">
+          <div class="player-name" id="display-p2-name">PEDRO</div>
+          <div class="secret-score">??? PTS</div>
+        </div>
+      </div>
+    </header>
+
+    <div class="deck-container">
+      <div class="card-tracker" id="card-tracker">TARJETA 1 DE 25</div>
+
+      <div class="flashcard-wrapper" onclick="flipCard()">
+        <div class="flashcard" id="flashcard">
+          <div class="card-face card-front">
+            <span class="category-badge" id="card-category">CATEGORÍA</span>
+            <div class="card-content" id="card-question">Cargando...</div>
+            <div class="card-hint">Toca para ver la respuesta</div>
+          </div>
+          <div class="card-face card-back">
+            <span class="category-badge">RESPUESTA</span>
+            <div class="card-content" id="card-answer">Cargando...</div>
+            <div class="card-hint">Toca para volver</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- BOTONES DE PUNTOS -->
+      <div class="card-actions">
+        <div class="scoring-group">
+          <div class="scoring-label" id="label-p1">AME</div>
+          <div class="btn-row">
+            <button class="score-btn btn-sub" onclick="addPoint('p1', -1, event)">-1</button>
+            <button class="score-btn" id="btn-p1-add" onclick="addPoint('p1', 1, event)">+1</button>
+          </div>
+          <div class="card-history" id="status-p1">Puntos tarjeta: 0</div>
+        </div>
+
+        <div class="scoring-group">
+          <div class="scoring-label" id="label-p2">PEDRO</div>
+          <div class="btn-row">
+            <button class="score-btn btn-sub" onclick="addPoint('p2', -1, event)">-1</button>
+            <button class="score-btn" id="btn-p2-add" onclick="addPoint('p2', 1, event)">+1</button>
+          </div>
+          <div class="card-history" id="status-p2">Puntos tarjeta: 0</div>
+        </div>
+      </div>
+
+      <!-- NAVEGACIÓN -->
+      <div class="nav-controls">
+        <button class="nav-btn" id="btn-prev" onclick="prevCard()" disabled>Anterior</button>
+        <button class="nav-btn" id="btn-next" onclick="nextCard()">Siguiente</button>
+        <button class="nav-btn finish-btn" onclick="showResults()">Ver Ganador</button>
+      </div>
     </div>
   </div>
 
-  <!-- MODAL DE RESULTADOS FINALES -->
+
+  <!-- MODAL DE RESULTADOS -->
   <div class="modal-overlay" id="results-modal">
     <div class="modal-content">
-      <div class="modal-title">REVELACIÓN DE GANADOR</div>
+      <div class="modal-title">RESULTADOS FINALES</div>
       
       <div class="winner-announcement" id="winner-announcement">
         CALCULANDO GANADOR...
       </div>
 
       <div class="analysis-section">
-        <h3>DESGLOSE Y ANÁLISIS DE CONOCIMIENTOS</h3>
-        <div id="analysis-text">
-          Analizando quién domina cada categoría...
-        </div>
+        <h3>ANÁLISIS DE CONOCIMIENTOS</h3>
+        <div id="analysis-text">Cargando desglose...</div>
       </div>
 
-      <button class="restart-btn" onclick="resetGame()">Jugar de Nuevo</button>
+      <button class="restart-btn" onclick="returnToSetup()">Nueva Partida / Configurar</button>
     </div>
   </div>
 
+
   <script>
-    // 25 PREGUNTAS TOTALMENTE NUEVAS DE TRIVIA POP Y DIVERTIBA
-    const questions = [
-      {
-        category: "Cine & Marvel",
-        question: "¿Cuál es el verdadero nombre de Spider-Man en la versión animada del 'Spider-Verse' que proviene de Brooklyn?",
-        answer: "Miles Morales"
-      },
-      {
-        category: "Música Pop / Argentina",
-        question: "¿Qué icónica cantante argentina lanzó la canción viral 'Nathy Peluso: BZRP Music Sessions, Vol. 36'?",
-        answer: "Nathy Peluso"
-      },
-      {
-        category: "Series & Netflix",
-        question: "En la serie 'Stranger Things', ¿cuál es el nombre de la dimensión paralela y oscura donde habita el Demogorgon?",
-        answer: "El Upside Down (El Otro Lado / Mundo del Revés)"
-      },
-      {
-        category: "Naturaleza Curiosa",
-        question: "¿Qué animal marino no tiene cerebro, corazón, ni sangre, pero ha sobrevivido por más de 500 millones de años?",
-        answer: "La Medusa"
-      },
-      {
-        category: "Música Urbana / Chile",
-        question: "¿Qué artista chileno de música urbana es conocido internacionalmente como 'El Rey del Reggaeton Chileno' o autor de 'Ultra Solo'?",
-        answer: "Polimá Westcoast / Cris Mj / Pailita (Se acepta Polimá Westcoast o Pailita)"
-      },
-      {
-        category: "Series & HBO",
-        question: "En la serie 'The Last of Us', ¿qué tipo de hongo causa la infección pandémica que transforma a los humanos?",
-        answer: "Cordyceps"
-      },
-      {
-        category: "Gaming & Pop",
-        question: "¿Qué estudio de videojuegos desarrolló la famosa saga 'The Witcher' y 'Cyberpunk 2077'?",
-        answer: "CD Projekt Red"
-      },
-      {
-        category: "Cultura Pop / Disney",
-        question: "En la película 'Toy Story', ¿cuál es la frase célebre de combate que siempre dice Buzz Lightyear?",
-        answer: "'Al infinito y más allá'"
-      },
-      {
-        category: "Chile Freak",
-        question: "¿En qué famosa playa de la Región de Valparaíso se encuentra el icónico reloj de flores inaugurado para el Mundial de 1962?",
-        answer: "Viña del Mar"
-      },
-      {
-        category: "Cine & Terror",
-        question: "¿Cómo se llama la muñeca poseída que es la protagonista de la saga derivada del universo de 'El Conjuro'?",
-        answer: "Annabelle"
-      },
-      {
-        category: "Música / Reggaeton",
-        question: "¿Qué famoso álbum histórico lanzado por Daddy Yankee en 2004 popularizó la canción 'Gasolina' en todo el planeta?",
-        answer: "Barrio Fino"
-      },
-      {
-        category: "Naturaleza Curiosa",
-        question: "¿Qué animal es capaz de regenerar no solo su cola o extremidades, sino también partes de su corazón y cerebro?",
-        answer: "El Ajolote (Axolotl)"
-      },
-      {
-        category: "Series & Comedia",
-        question: "En la serie 'The Office' (EE.UU.), ¿en qué ciudad del estado de Pensilvania está ubicada la sucursal de Dunder Mifflin?",
-        answer: "Scranton"
-      },
-      {
-        category: "Cultura General Pop",
-        question: "¿Qué famosa marca internacional de ropa deportiva tiene por logo un 'Swoosh' (la famosa flecha curva)?",
-        answer: "Nike"
-      },
-      {
-        category: "Cine & Animación",
-        question: "En la película 'Spirited Away' (El Viaje de Chihiro), ¿en qué animales son transformados los padres de Chihiro al principio?",
-        answer: "En Cerdos"
-      },
-      {
-        category: "Chile / Modismos",
-        question: "Según el dicho popular chileno, cuando alguien anda 'pato', ¿qué le falta o qué le pasa?",
-        answer: "Le falta dinero / Está sin plata"
-      },
-      {
-        category: "Música & K-Pop",
-        question: "¿Cuál es el nombre del grupo masculino de K-Pop más famoso del mundo integrado por 7 miembros (Jin, Suga, J-Hope, RM, Jimin, V, Jungkook)?",
-        answer: "BTS"
-      },
-      {
-        category: "Naturaleza & Ciencia",
-        question: "¿Qué porcentaje aproximado de la superficie del planeta Tierra está cubierta de agua?",
-        answer: "Aproximadamente el 71%"
-      },
-      {
-        category: "Cultura Pop / Anime",
-        question: "En 'Dragon Ball Z', ¿de qué planeta proviene la raza de los Saiyajin a la que pertenecen Goku y Vegeta?",
-        answer: "Planeta Vegeta (o Planeta Plant)"
-      },
-      {
-        category: "Gaming & Internet",
-        question: "¿En qué año se lanzó globalmente el fenómeno del juego para móviles 'Pokémon GO' que sacó a todos a la calle?",
-        answer: "2016"
-      },
-      {
-        category: "Cine & Hollywood",
-        question: "¿Qué película ganó el premio Oscar a Mejor Película en 2024 dirigida por Christopher Nolan sobre el creador de la bomba atómica?",
-        answer: "Oppenheimer"
-      },
-      {
-        category: "Cultura Chilena / TV",
-        question: "¿En qué programa infantil de marionetas se emitió por primera vez la canción 'Lala' de Lino y los Huipas?",
-        answer: "31 Minutos"
-      },
-      {
-        category: "Series & Netflix",
-        question: "¿En qué país asiático se desarrolla la historia de la exitosa serie 'El Juego del Calamar' (Squid Game)?",
-        answer: "Corea del Sur"
-      },
-      {
-        category: "Música Pop Mundial",
-        question: "¿Qué cantante británica de pop lanzó los álbumes titulados con números '19', '21', '25' y '30'?",
-        answer: "Adele"
-      },
-      {
-        category: "Datos Curiosos",
-        question: "¿Cuál es el único alimento natural que nunca se echa a perder y puede durar miles de años intacto?",
-        answer: "La Miel"
-      }
+    // BANCO LOCAL DE RESPALDO (Por si falla internet)
+    const BACKUP_BANK = [
+      { category: "Cine & Pop", question: "¿Cómo se llama el universo animado del Spiderman de Miles Morales?", answer: "Spider-Verse" },
+      { category: "Música & Urbano", question: "¿Qué cantante argentina lanzó el álbum 'NATHY PELUSO: Calambre'?", answer: "Nathy Peluso" },
+      { category: "Series & Gaming", question: "En 'The Last of Us', ¿cuál es el nombre del hongo real que infecta a la humanidad?", answer: "Cordyceps" },
+      { category: "Naturaleza Freak", question: "¿Qué animal es capaz de regenerar no solo sus extremidades, sino también su corazón?", answer: "El Ajolote" },
+      { category: "Cine", question: "¿Qué director dirigió la película 'Oppenheimer' en 2023?", answer: "Christopher Nolan" },
+      { category: "Series Pop", question: "¿En qué ciudad ficticia transcurren los hechos de 'Stranger Things'?", answer: "Hawkins" },
+      { category: "Cultura Chilena / TV", question: "En 31 Minutos, ¿cuál es el apellido del periodista estrella de la Nota Verde?", answer: "Bodoque (Juan Carlos Bodoque)" },
+      { category: "Música Chilena", question: "¿Qué canción de Polimá Westcoast y Pailita se convirtió en un éxito mundial en 2022?", answer: "Ultra Solo" },
+      { category: "Cultura Pop", question: "¿Qué famoso cantante lanzó el álbum 'Watermelon Sugar'?", answer: "Harry Styles" },
+      { category: "Música & K-Pop", question: "¿Cómo se llama la base de fans oficial de BTS?", answer: "ARMY" },
+      { category: "Naturaleza", question: "¿Cuál es el único mamífero capaz de volar de forma activa?", answer: "El Murciélago" },
+      { category: "Cultura Chilena / Memes", question: "¿De qué trago chileno son ingredientes el vino pipeño, helado de piña y granadina?", answer: "El Terremoto" },
+      { category: "Gaming", question: "¿Cuál es el videojuego más vendido de todos los tiempos?", answer: "Minecraft" },
+      { category: "Música", question: "¿Qué dúo francés de música electrónica usaba cascos de robot en sus presentaciones?", answer: "Daft Punk" },
+      { category: "Cine", question: "¿Qué actor interpreta a Jack Sparrow en 'Piratas del Caribe'?", answer: "Johnny Depp" }
     ];
 
-    let currentIndex = 0;
-    let scoreAme = 0;
-    let scorePedro = 0;
+    let player1 = { name: "Ame", color: "#ff70a6" };
+    let player2 = { name: "Pedro", color: "#70d6ff" };
 
-    // Guardar puntos por cada tarjeta individual
-    let cardScores = Array(questions.length).fill(null).map((_, i) => ({
-      ame: 0,
-      pedro: 0,
-      category: questions[i].category
-    }));
+    let currentDeck = [];
+    let currentIndex = 0;
+    let scoreP1 = 0;
+    let scoreP2 = 0;
+    let cardScores = [];
+
+    // SELECTOR DE COLORES
+    document.querySelectorAll('#p1-colors .color-opt').forEach(opt => {
+      opt.addEventListener('click', (e) => {
+        document.querySelectorAll('#p1-colors .color-opt').forEach(o => o.classList.remove('selected'));
+        e.target.classList.add('selected');
+        player1.color = e.target.getAttribute('data-color');
+      });
+    });
+
+    document.querySelectorAll('#p2-colors .color-opt').forEach(opt => {
+      opt.addEventListener('click', (e) => {
+        document.querySelectorAll('#p2-colors .color-opt').forEach(o => o.classList.remove('selected'));
+        e.target.classList.add('selected');
+        player2.color = e.target.getAttribute('data-color');
+      });
+    });
+
+    function shuffleArray(arr) {
+      return [...arr].sort(() => Math.random() - 0.5);
+    }
+
+    // OBTENER PREGUNTAS DESDE API ONLINE DE TRIVIA
+    async function fetchOnlineQuestions() {
+      try {
+        const response = await fetch("https://opentdb.com/api.php?amount=25&type=multiple");
+        const data = await response.json();
+        
+        if (data.results && data.results.length > 0) {
+          // Mapear y traducir etiquetas de categorías comunes
+          return data.results.map(item => {
+            const tempElem = document.createElement("textarea");
+            tempElem.innerHTML = item.question;
+            const decodedQuestion = tempElem.value;
+            
+            tempElem.innerHTML = item.correct_answer;
+            const decodedAnswer = tempElem.value;
+
+            return {
+              category: item.category.replace("Entertainment: ", "").replace("Science: ", ""),
+              question: decodedQuestion,
+              answer: decodedAnswer
+            };
+          });
+        }
+      } catch (err) {
+        console.log("Usando banco local de respaldo por conexión.");
+      }
+      return shuffleArray(BACKUP_BANK);
+    }
+
+    async function startGame() {
+      player1.name = document.getElementById('p1-name-input').value.trim() || "Jugador 1";
+      player2.name = document.getElementById('p2-name-input').value.trim() || "Jugador 2";
+
+      document.getElementById('start-btn').disabled = true;
+      document.getElementById('loading-status').style.display = 'block';
+
+      // Cargar preguntas frescas online
+      currentDeck = await fetchOnlineQuestions();
+
+      // Aplicar colores y nombres
+      document.getElementById('display-p1-name').innerText = player1.name;
+      document.getElementById('display-p1-name').style.color = player1.color;
+      document.getElementById('label-p1').innerText = player1.name;
+      document.getElementById('label-p1').style.color = player1.color;
+      document.getElementById('card-p1').style.borderTop = `4px solid ${player1.color}`;
+      document.getElementById('btn-p1-add').style.background = player1.color;
+      document.getElementById('btn-p1-add').style.color = "#0d0e12";
+
+      document.getElementById('display-p2-name').innerText = player2.name;
+      document.getElementById('display-p2-name').style.color = player2.color;
+      document.getElementById('label-p2').innerText = player2.name;
+      document.getElementById('label-p2').style.color = player2.color;
+      document.getElementById('card-p2').style.borderTop = `4px solid ${player2.color}`;
+      document.getElementById('btn-p2-add').style.background = player2.color;
+      document.getElementById('btn-p2-add').style.color = "#0d0e12";
+
+      currentIndex = 0;
+      scoreP1 = 0;
+      scoreP2 = 0;
+
+      cardScores = Array(currentDeck.length).fill(null).map((_, i) => ({
+        p1: 0,
+        p2: 0,
+        category: currentDeck[i].category
+      }));
+
+      // Ocultar pantalla de carga e iniciar
+      document.getElementById('loading-status').style.display = 'none';
+      document.getElementById('start-btn').disabled = false;
+      document.getElementById('setup-screen').style.display = 'none';
+      document.getElementById('game-interface').style.display = 'flex';
+
+      updateCardUI();
+    }
 
     function updateCardUI() {
-      const q = questions[currentIndex];
-      document.getElementById('card-tracker').innerText = `TARJETA ${currentIndex + 1} DE ${questions.length}`;
+      const q = currentDeck[currentIndex];
+      document.getElementById('card-tracker').innerText = `TARJETA ${currentIndex + 1} DE ${currentDeck.length}`;
       document.getElementById('card-category').innerText = q.category;
       document.getElementById('card-question').innerText = q.question;
+      document.getElementById('card-answer').innerText = q.answer;
 
-      // SOLUCIÓN A SPOILERS: Ocultar texto de respuesta hasta que la tarjeta gire
-      const answerEl = document.getElementById('card-answer');
-      answerEl.style.visibility = 'hidden';
-      answerEl.innerText = q.answer;
-
-      // Asegurar que la tarjeta comience siempre en la cara frontal
       document.getElementById('flashcard').classList.remove('flipped');
 
-      // Actualizar contadores locales de la tarjeta
-      document.getElementById('card-point-ame').innerText = `Tarjeta: ${cardScores[currentIndex].ame} pt`;
-      document.getElementById('card-point-pedro').innerText = `Tarjeta: ${cardScores[currentIndex].pedro} pt`;
+      document.getElementById('status-p1').innerText = `Puntos tarjeta: ${cardScores[currentIndex].p1}`;
+      document.getElementById('status-p2').innerText = `Puntos tarjeta: ${cardScores[currentIndex].p2}`;
 
-      // Habilitar / Deshabilitar botones de navegación
       document.getElementById('btn-prev').disabled = currentIndex === 0;
-      document.getElementById('btn-next').disabled = currentIndex === questions.length - 1;
+      document.getElementById('btn-next').disabled = currentIndex === currentDeck.length - 1;
     }
 
     function flipCard() {
-      const card = document.getElementById('flashcard');
-      card.classList.toggle('flipped');
-
-      // Mostrar texto de la respuesta solo al voltear para evitar destellos
-      const answerEl = document.getElementById('card-answer');
-      if (card.classList.contains('flipped')) {
-        setTimeout(() => {
-          answerEl.style.visibility = 'visible';
-        }, 150);
-      } else {
-        answerEl.style.visibility = 'hidden';
-      }
+      document.getElementById('flashcard').classList.toggle('flipped');
     }
 
     function addPoint(player, amount, event) {
-      if (event) event.stopPropagation(); // Previene voltear la tarjeta al hacer clic en +1/-1
+      if (event) event.stopPropagation();
 
-      if (player === 'ame') {
-        cardScores[currentIndex].ame += amount;
-        scoreAme += amount;
-        document.getElementById('status-ame').innerText = "✓ Registro Guardado";
+      if (player === 'p1') {
+        cardScores[currentIndex].p1 += amount;
+        scoreP1 += amount;
+        document.getElementById('status-p1').innerText = `Puntos tarjeta: ${cardScores[currentIndex].p1}`;
       } else {
-        cardScores[currentIndex].pedro += amount;
-        scorePedro += amount;
-        document.getElementById('status-pedro').innerText = "✓ Registro Guardado";
+        cardScores[currentIndex].p2 += amount;
+        scoreP2 += amount;
+        document.getElementById('status-p2').innerText = `Puntos tarjeta: ${cardScores[currentIndex].p2}`;
       }
-
-      // Actualizar contador individual de tarjeta
-      document.getElementById('card-point-ame').innerText = `Tarjeta: ${cardScores[currentIndex].ame} pt`;
-      document.getElementById('card-point-pedro').innerText = `Tarjeta: ${cardScores[currentIndex].pedro} pt`;
     }
 
     function nextCard() {
-      if (currentIndex < questions.length - 1) {
+      if (currentIndex < currentDeck.length - 1) {
         currentIndex++;
         updateCardUI();
       }
@@ -667,69 +786,52 @@
       const winnerText = document.getElementById('winner-announcement');
       const analysisText = document.getElementById('analysis-text');
 
-      // Revelación de Ganador
-      if (scoreAme > scorePedro) {
-        winnerText.innerHTML = `<span style="color:#ff70a6;">¡AME ES LA GANADORA!</span><br><small style="font-size:1rem; color:#ffffff;">Ame: ${scoreAme} pts vs Pedro: ${scorePedro} pts</small>`;
-      } else if (scorePedro > scoreAme) {
-        winnerText.innerHTML = `<span style="color:#70d6ff;">¡PEDRO ES EL GANADOR!</span><br><small style="font-size:1rem; color:#ffffff;">Pedro: ${scorePedro} pts vs Ame: ${scoreAme} pts</small>`;
+      if (scoreP1 > scoreP2) {
+        winnerText.innerHTML = `<span style="color:${player1.color};">¡${player1.name.toUpperCase()} GANA LA PARTIDA!</span><br><small style="font-size:1rem; color:#fff;">${scoreP1} pts vs ${scoreP2} pts</small>`;
+      } else if (scoreP2 > scoreP1) {
+        winnerText.innerHTML = `<span style="color:${player2.color};">¡${player2.name.toUpperCase()} GANA LA PARTIDA!</span><br><small style="font-size:1rem; color:#fff;">${scoreP2} pts vs ${scoreP1} pts</small>`;
       } else {
-        winnerText.innerHTML = `<span style="color:#ffffff;">¡EMPATE TÁCTICO!</span><br><small style="font-size:1rem; color:#ffffff;">Ambos obtuvieron ${scoreAme} pts</small>`;
+        winnerText.innerHTML = `<span style="color:#ffffff;">¡EMPATE TÁCTICO!</span><br><small style="font-size:1rem; color:#fff;">Ambos obtuvieron ${scoreP1} pts</small>`;
       }
 
-      // Agrupar puntos por categoría
       const stats = {};
       cardScores.forEach(item => {
         if (!stats[item.category]) {
-          stats[item.category] = { ame: 0, pedro: 0 };
+          stats[item.category] = { p1: 0, p2: 0 };
         }
-        stats[item.category].ame += item.ame;
-        stats[item.category].pedro += item.pedro;
+        stats[item.category].p1 += item.p1;
+        stats[item.category].p2 += item.p2;
       });
 
       let categoryAnalysisHTML = "";
       for (const [cat, scores] of Object.entries(stats)) {
-        let domain = "Nivel Parejo";
-        if (scores.ame > scores.pedro) domain = "<span style='color:#ff70a6;'>Dominado por Ame</span>";
-        else if (scores.pedro > scores.ame) domain = "<span style='color:#70d6ff;'>Dominado por Pedro</span>";
+        let domain = "Empate";
+        if (scores.p1 > scores.p2) domain = `<span style="color:${player1.color}">${player1.name}</span>`;
+        else if (scores.p2 > scores.p1) domain = `<span style="color:${player2.color}">${player2.name}</span>`;
 
         categoryAnalysisHTML += `
-          <div style="margin-bottom: 10px; font-size: 0.9rem; display:flex; justify-content:space-between; border-bottom: 1px solid #1a1e2b; padding-bottom: 4px;">
+          <div style="margin-bottom: 8px; font-size: 0.9rem; display:flex; justify-content:space-between;">
             <strong>${cat}:</strong>
-            <span>${domain} (${scores.ame} vs ${scores.pedro})</span>
+            <span>Dominio: ${domain} (${scores.p1} vs ${scores.p2})</span>
           </div>
         `;
       }
 
       analysisText.innerHTML = `
-        <div style="margin-bottom: 15px;">
-          ${categoryAnalysisHTML}
-        </div>
-        <p style="font-size:0.85rem; color:#a0a5b5; line-height: 1.5;">
-          ${scoreAme > scorePedro ? 'Ame demostró superioridad en las preguntas de cultura pop y series.' : scorePedro > scoreAme ? 'Pedro se quedó con la victoria dominando los datos curiosos y el cine.' : 'Una batalla sumamente pareja en todas las áreas de la trivia.'}
-        </p>
+        <p style="margin-bottom:12px;"><strong>Puntajes Totales por Área:</strong></p>
+        ${categoryAnalysisHTML}
       `;
 
       modal.classList.add('active');
     }
 
-    function resetGame() {
-      currentIndex = 0;
-      scoreAme = 0;
-      scorePedro = 0;
-      cardScores = Array(questions.length).fill(null).map((_, i) => ({
-        ame: 0,
-        pedro: 0,
-        category: questions[i].category
-      }));
-
-      document.getElementById('status-ame').innerText = "Puntos Ocultos";
-      document.getElementById('status-pedro').innerText = "Puntos Ocultos";
+    function returnToSetup() {
       document.getElementById('results-modal').classList.remove('active');
-      updateCardUI();
+      document.getElementById('game-interface').style.display = 'none';
+      document.getElementById('setup-screen').style.display = 'block';
     }
-
-    // Inicializar primera tarjeta
-    updateCardUI();
   </script>
 </body>
 </html>
+
+```
