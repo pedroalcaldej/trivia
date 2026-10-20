@@ -1,10 +1,9 @@
-```html
 <!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Trivia Flashcards Infinitas: Ame vs Pedro</title>
+  <title>Trivia Flashcards: Ame vs Pedro</title>
   <style>
     * {
       box-sizing: border-box;
@@ -41,7 +40,7 @@
       letter-spacing: 2px;
       text-transform: uppercase;
       text-align: center;
-      margin-bottom: 20px;
+      margin-bottom: 5px;
       color: #ffffff;
     }
 
@@ -221,7 +220,7 @@
 
     .flashcard-wrapper {
       width: 100%;
-      height: 320px;
+      min-height: 340px;
       perspective: 1000px;
       cursor: pointer;
       margin-bottom: 20px;
@@ -280,6 +279,19 @@
       line-height: 1.5;
       color: #ffffff;
       margin: auto 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .card-image {
+      max-width: 100%;
+      max-height: 160px;
+      border-radius: 8px;
+      object-fit: cover;
+      margin-bottom: 5px;
+      border: 1px solid #3a3f55;
     }
 
     /* PREVENCIÓN DE SPOILERS */
@@ -481,7 +493,7 @@
   <!-- PANTALLA DE INICIO Y CONFIGURACIÓN -->
   <div class="setup-card" id="setup-screen">
     <div class="setup-title">CONFIGURAR PARTIDA</div>
-    <div class="setup-subtitle">Preguntas Infinitas desde la Nube</div>
+    <div class="setup-subtitle">Powered by The Trivia API</div>
 
     <!-- JUGADOR 1 -->
     <div class="player-setup-box">
@@ -520,7 +532,7 @@
     </div>
 
     <button class="btn-start" id="start-btn" onclick="startGame()">¡Iniciar Nuevo Juego!</button>
-    <div class="loading-status" id="loading-status">Cargando preguntas frescas desde internet...</div>
+    <div class="loading-status" id="loading-status">Conectando a The Trivia API...</div>
   </div>
 
 
@@ -547,7 +559,11 @@
         <div class="flashcard" id="flashcard">
           <div class="card-face card-front">
             <span class="category-badge" id="card-category">CATEGORÍA</span>
-            <div class="card-content" id="card-question">Cargando...</div>
+            <div class="card-content" id="card-question">
+              <!-- Imagen opcional para preguntas visuales -->
+              <img id="card-image" class="card-image" style="display:none;" src="" alt="Pregunta visual">
+              <span id="card-question-text">Cargando...</span>
+            </div>
             <div class="card-hint">Toca para ver la respuesta</div>
           </div>
           <div class="card-face card-back">
@@ -609,23 +625,17 @@
 
 
   <script>
-    // BANCO LOCAL DE RESPALDO (Por si falla internet)
+    // BANCO LOCAL DE RESPALDO (Por si falla la conexión)
     const BACKUP_BANK = [
-      { category: "Cine & Pop", question: "¿Cómo se llama el universo animado del Spiderman de Miles Morales?", answer: "Spider-Verse" },
-      { category: "Música & Urbano", question: "¿Qué cantante argentina lanzó el álbum 'NATHY PELUSO: Calambre'?", answer: "Nathy Peluso" },
-      { category: "Series & Gaming", question: "En 'The Last of Us', ¿cuál es el nombre del hongo real que infecta a la humanidad?", answer: "Cordyceps" },
-      { category: "Naturaleza Freak", question: "¿Qué animal es capaz de regenerar no solo sus extremidades, sino también su corazón?", answer: "El Ajolote" },
-      { category: "Cine", question: "¿Qué director dirigió la película 'Oppenheimer' en 2023?", answer: "Christopher Nolan" },
-      { category: "Series Pop", question: "¿En qué ciudad ficticia transcurren los hechos de 'Stranger Things'?", answer: "Hawkins" },
-      { category: "Cultura Chilena / TV", question: "En 31 Minutos, ¿cuál es el apellido del periodista estrella de la Nota Verde?", answer: "Bodoque (Juan Carlos Bodoque)" },
-      { category: "Música Chilena", question: "¿Qué canción de Polimá Westcoast y Pailita se convirtió en un éxito mundial en 2022?", answer: "Ultra Solo" },
-      { category: "Cultura Pop", question: "¿Qué famoso cantante lanzó el álbum 'Watermelon Sugar'?", answer: "Harry Styles" },
-      { category: "Música & K-Pop", question: "¿Cómo se llama la base de fans oficial de BTS?", answer: "ARMY" },
-      { category: "Naturaleza", question: "¿Cuál es el único mamífero capaz de volar de forma activa?", answer: "El Murciélago" },
-      { category: "Cultura Chilena / Memes", question: "¿De qué trago chileno son ingredientes el vino pipeño, helado de piña y granadina?", answer: "El Terremoto" },
-      { category: "Gaming", question: "¿Cuál es el videojuego más vendido de todos los tiempos?", answer: "Minecraft" },
-      { category: "Música", question: "¿Qué dúo francés de música electrónica usaba cascos de robot en sus presentaciones?", answer: "Daft Punk" },
-      { category: "Cine", question: "¿Qué actor interpreta a Jack Sparrow en 'Piratas del Caribe'?", answer: "Johnny Depp" }
+      { category: "Film & TV", question: "¿Cómo se llama el universo animado del Spiderman de Miles Morales?", answer: "Spider-Verse" },
+      { category: "Music", question: "¿Qué cantante argentina lanzó el álbum 'Calambre'?", answer: "Nathy Peluso" },
+      { category: "Gaming", question: "En 'The Last of Us', ¿cuál es el nombre del hongo real que infecta a la humanidad?", answer: "Cordyceps" },
+      { category: "Science", question: "¿Qué animal es capaz de regenerar no solo sus extremidades, sino también partes de su cerebro y corazón?", answer: "El Ajolote" },
+      { category: "Film & TV", question: "¿Qué director dirigió la taquillera película 'Oppenheimer' en 2023?", answer: "Christopher Nolan" },
+      { category: "Chile & Pop", question: "En 31 Minutos, ¿cuál es el apellido del periodista estrella de la Nota Verde?", answer: "Bodoque (Juan Carlos Bodoque)" },
+      { category: "Music", question: "¿Qué canción de Polimá Westcoast y Pailita se convirtió en un éxito mundial en 2022?", answer: "Ultra Solo" },
+      { category: "Pop Culture", question: "¿Qué famoso cantante lanzó el tema 'Watermelon Sugar'?", answer: "Harry Styles" },
+      { category: "General Knowledge", question: "¿Cuál es el lugar más seco del planeta fuera de las regiones polares?", answer: "El Desierto de Atacama (Chile)" }
     ];
 
     let player1 = { name: "Ame", color: "#ff70a6" };
@@ -658,31 +668,25 @@
       return [...arr].sort(() => Math.random() - 0.5);
     }
 
-    // OBTENER PREGUNTAS DESDE API ONLINE DE TRIVIA
-    async function fetchOnlineQuestions() {
+    // CONEXIÓN OFICIAL A THE TRIVIA API v2
+    async function fetchTheTriviaApiQuestions() {
       try {
-        const response = await fetch("https://opentdb.com/api.php?amount=25&type=multiple");
+        const response = await fetch("https://the-trivia-api.com/v2/questions?limit=25");
+        if (!response.ok) throw new Error("API Status: " + response.status);
         const data = await response.json();
         
-        if (data.results && data.results.length > 0) {
-          // Mapear y traducir etiquetas de categorías comunes
-          return data.results.map(item => {
-            const tempElem = document.createElement("textarea");
-            tempElem.innerHTML = item.question;
-            const decodedQuestion = tempElem.value;
-            
-            tempElem.innerHTML = item.correct_answer;
-            const decodedAnswer = tempElem.value;
-
+        if (data && data.length > 0) {
+          return data.map(item => {
             return {
-              category: item.category.replace("Entertainment: ", "").replace("Science: ", ""),
-              question: decodedQuestion,
-              answer: decodedAnswer
+              category: item.category ? item.category.replace(/_/g, " ").toUpperCase() : "GENERAL",
+              question: item.question.text,
+              answer: item.correctAnswer,
+              imageUrl: item.images && item.images.length > 0 ? item.images[0].url : null
             };
           });
         }
       } catch (err) {
-        console.log("Usando banco local de respaldo por conexión.");
+        console.warn("No se pudo conectar con The Trivia API. Usando banco alternativo:", err);
       }
       return shuffleArray(BACKUP_BANK);
     }
@@ -694,8 +698,8 @@
       document.getElementById('start-btn').disabled = true;
       document.getElementById('loading-status').style.display = 'block';
 
-      // Cargar preguntas frescas online
-      currentDeck = await fetchOnlineQuestions();
+      // Cargar preguntas desde The Trivia API v2
+      currentDeck = await fetchTheTriviaApiQuestions();
 
       // Aplicar colores y nombres
       document.getElementById('display-p1-name').innerText = player1.name;
@@ -724,7 +728,7 @@
         category: currentDeck[i].category
       }));
 
-      // Ocultar pantalla de carga e iniciar
+      // Ocultar pantalla de inicio
       document.getElementById('loading-status').style.display = 'none';
       document.getElementById('start-btn').disabled = false;
       document.getElementById('setup-screen').style.display = 'none';
@@ -737,8 +741,18 @@
       const q = currentDeck[currentIndex];
       document.getElementById('card-tracker').innerText = `TARJETA ${currentIndex + 1} DE ${currentDeck.length}`;
       document.getElementById('card-category').innerText = q.category;
-      document.getElementById('card-question').innerText = q.question;
+      document.getElementById('card-question-text').innerText = q.question;
       document.getElementById('card-answer').innerText = q.answer;
+
+      // Soporte para preguntas con imágenes (Image questions)
+      const imgElem = document.getElementById('card-image');
+      if (q.imageUrl) {
+        imgElem.src = q.imageUrl;
+        imgElem.style.display = 'block';
+      } else {
+        imgElem.style.display = 'none';
+        imgElem.src = '';
+      }
 
       document.getElementById('flashcard').classList.remove('flipped');
 
@@ -833,5 +847,3 @@
   </script>
 </body>
 </html>
-
-```
