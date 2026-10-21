@@ -1,6 +1,5 @@
 export async function fetchSpanishGeminiApi(apiKey, limit, difficulty, checkedCats) {
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
-
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent?key=${apiKey}`;
   const catNames = checkedCats.join(", ");
   const diffText = difficulty === 'all' ? 'variada (fácil, media y difícil)' : difficulty;
 
