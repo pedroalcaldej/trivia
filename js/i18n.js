@@ -2,7 +2,7 @@ import { renderPlayerInputs } from './ui/setupUI.js';
 
 export function isSpanishEngine() {
   const select = document.getElementById('engine-selector');
-  return select ? select.value === 'gemini_es' : true;
+  return select ? select.value === 'gemini_es' : false;
 }
 
 export function handleEngineChange() {
