@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Trivia Flashcards Pro: Ame vs Pedro</title>
+  <title>Trivia Flashcards Live: Ame vs Pedro</title>
   <style>
     * {
       box-sizing: border-box;
@@ -120,8 +120,65 @@
       text-transform: uppercase;
       letter-spacing: 1px;
       color: #70d6ff;
-      margin-bottom: 12px;
+      margin-bottom: 10px;
       margin-top: 5px;
+    }
+
+    /* MULTI-CATEGORY CHECKBOXES */
+    .categories-box {
+      background: #0d0e12;
+      border: 1px solid #252938;
+      border-radius: 10px;
+      padding: 12px;
+      margin-bottom: 16px;
+    }
+
+    .category-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .toggle-all-btn {
+      background: none;
+      border: none;
+      color: #70d6ff;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      cursor: pointer;
+    }
+
+    .categories-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      max-height: 180px;
+      overflow-y: auto;
+      padding-right: 5px;
+    }
+
+    .category-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: #161820;
+      padding: 8px 10px;
+      border-radius: 6px;
+      border: 1px solid #2a2d3d;
+      font-size: 0.8rem;
+      color: #e0e6ed;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .category-item input[type="checkbox"] {
+      accent-color: #ff70a6;
+      width: 15px;
+      height: 15px;
+      cursor: pointer;
     }
 
     .btn-start {
@@ -137,7 +194,7 @@
       letter-spacing: 1.5px;
       cursor: pointer;
       transition: transform 0.15s, background 0.2s;
-      margin-top: 10px;
+      margin-top: 5px;
     }
 
     .btn-start:hover { background: #ff85b3; }
@@ -152,10 +209,22 @@
       font-weight: 600;
     }
 
+    .error-box {
+      display: none;
+      background: #3a1c24;
+      border: 1px solid #ff4d6d;
+      color: #ffb3c1;
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      margin-top: 15px;
+      text-align: center;
+    }
+
     /* GAME INTERFACE */
     .game-interface {
       width: 100%;
-      max-width: 650px;
+      max-width: 620px;
       display: none;
       flex-direction: column;
       align-items: center;
@@ -206,7 +275,7 @@
       letter-spacing: 2px;
     }
 
-    /* CARDS CONTAINER */
+    /* ENHANCED FLASHCARD UI */
     .deck-container {
       width: 100%;
       display: flex;
@@ -224,7 +293,7 @@
 
     .flashcard-wrapper {
       width: 100%;
-      min-height: 340px;
+      height: 420px;
       perspective: 1000px;
       cursor: pointer;
       margin-bottom: 20px;
@@ -241,81 +310,142 @@
 
     .flashcard.flipped { transform: rotateY(180deg); }
 
+    /* CLEARLY DEFINED FRAME AND BORDER FOR CARDS */
     .card-face {
       position: absolute;
       width: 100%;
       height: 100%;
       backface-visibility: hidden;
       border-radius: 16px;
-      padding: 25px;
+      padding: 20px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
       align-items: center;
       text-align: center;
       background: #161820;
-      border: 1px solid #2a2d3d;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+      border: 2px solid #3b4158;
+      box-shadow: 0 12px 35px rgba(0,0,0,0.6);
+      overflow: hidden;
     }
 
     .card-back {
       transform: rotateY(180deg);
-      background: #1c202d;
-      border-color: #3b4158;
+      background: #181c28;
+      border-color: #4a5370;
     }
 
     .category-badge {
-      font-size: 0.75rem;
-      font-weight: 700;
+      font-size: 0.7rem;
+      font-weight: 800;
       text-transform: uppercase;
       letter-spacing: 2px;
-      padding: 6px 12px;
+      padding: 6px 14px;
       border-radius: 20px;
       background: #252938;
       color: #e0e6ed;
+      border: 1px solid #3b4158;
+      flex-shrink: 0;
     }
 
-    .card-content {
-      font-size: 1.2rem;
-      font-weight: 600;
-      line-height: 1.5;
-      color: #ffffff;
-      margin: auto 0;
+    .card-body {
+      width: 100%;
+      flex: 1;
       display: flex;
       flex-direction: column;
+      justify-content: center;
       align-items: center;
       gap: 12px;
+      margin: 10px 0;
+      overflow-y: auto;
+    }
+
+    .question-text {
+      font-size: 1.1rem;
+      font-weight: 600;
+      line-height: 1.45;
+      color: #ffffff;
+      max-width: 95%;
     }
 
     .card-image {
       max-width: 100%;
-      max-height: 150px;
+      max-height: 120px;
       border-radius: 8px;
       object-fit: cover;
       border: 1px solid #3a3f55;
     }
 
-    /* PREVENCIÓN DE SPOILERS */
-    .card-back .card-content {
+    /* STRUCTURED OPTIONS GRID */
+    .options-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      width: 100%;
+      margin-top: 5px;
+    }
+
+    .option-item {
+      background: #202433;
+      border: 1px solid #33394f;
+      border-radius: 8px;
+      padding: 8px 10px;
+      font-size: 0.82rem;
+      color: #d1d5db;
+      text-align: left;
+      line-height: 1.3;
+      display: flex;
+      align-items: flex-start;
+      gap: 6px;
+    }
+
+    .option-letter {
       color: #70d6ff;
+      font-weight: 800;
+      flex-shrink: 0;
+    }
+
+    /* REVERSE FACE NO-SPOILER VISIBILITY */
+    .card-back .card-body {
       visibility: hidden;
       opacity: 0;
       transition: opacity 0.2s ease 0.3s;
     }
 
-    .flashcard.flipped .card-back .card-content {
+    .flashcard.flipped .card-back .card-body {
       visibility: visible;
       opacity: 1;
     }
 
-    .card-hint {
-      font-size: 0.8rem;
+    .answer-title {
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: #a0a5b5;
+    }
+
+    .correct-answer-box {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: #70d6ff;
+      padding: 16px;
+      border-radius: 12px;
+      background: rgba(112, 214, 255, 0.08);
+      border: 1.5px solid #70d6ff;
+      width: 100%;
+      line-height: 1.4;
+    }
+
+    .card-footer {
+      font-size: 0.75rem;
       color: #70778b;
       text-transform: uppercase;
       letter-spacing: 1px;
+      flex-shrink: 0;
     }
 
-    /* CONTROLES PUNTOS */
+    /* SCORING CONTROLS */
     .card-actions {
       width: 100%;
       background: #161820;
@@ -370,7 +500,7 @@
       margin-top: 4px;
     }
 
-    /* NAVEGACIÓN */
+    /* NAVIGATION */
     .nav-controls {
       display: flex;
       gap: 12px;
@@ -482,16 +612,16 @@
 </head>
 <body>
 
-  <!-- PANTALLA DE INICIO Y CONFIGURACIÓN COMPLETA -->
+  <!-- SETUP & CONFIGURATION SCREEN -->
   <div class="setup-card" id="setup-screen">
-    <div class="setup-title">TRIVIA CONFIGURATOR</div>
-    <div class="setup-subtitle">The Trivia API v2 Advanced Filters</div>
+    <div class="setup-title">TRIVIA LIVE API</div>
+    <div class="setup-subtitle">Official English The Trivia API v2</div>
 
-    <!-- JUGADORES -->
+    <!-- PLAYERS -->
     <div class="player-setup-box">
       <div class="grid-2">
         <div class="form-group" style="margin-bottom:0;">
-          <label>Jugador 1</label>
+          <label>Player 1</label>
           <input type="text" class="input-text" id="p1-name-input" value="Ame">
           <div class="color-picker-row" id="p1-colors">
             <div class="color-opt selected" style="background:#ff70a6;" data-color="#ff70a6"></div>
@@ -502,7 +632,7 @@
         </div>
 
         <div class="form-group" style="margin-bottom:0;">
-          <label>Jugador 2</label>
+          <label>Player 2</label>
           <input type="text" class="input-text" id="p2-name-input" value="Pedro">
           <div class="color-picker-row" id="p2-colors">
             <div class="color-opt" style="background:#ff70a6;" data-color="#ff70a6"></div>
@@ -514,80 +644,59 @@
       </div>
     </div>
 
-    <!-- OBTENER DATO DE LA API: PARÁMETROS Y DOCUMENTACIÓN DE TRIVIA API -->
-    <div class="config-section-title">Parámetros de Trivia API</div>
+    <!-- CONFIGURATIONS -->
+    <div class="config-section-title">API Parameters</div>
 
     <div class="grid-2">
-      <!-- SELECTOR DE IDIOMA (language) -->
       <div class="form-group">
-        <label>Idioma (Language)</label>
-        <select class="select-input" id="api-language">
-          <option value="es" selected>Español (ES)</option>
-          <option value="en">English (EN)</option>
-          <option value="fr">Français (FR)</option>
-          <option value="de">Deutsch (DE)</option>
-          <option value="pt">Português (PT)</option>
-        </select>
-      </div>
-
-      <!-- SELECTOR DE DIFICULTAD (difficulties) -->
-      <div class="form-group">
-        <label>Dificultad</label>
+        <label>Difficulty</label>
         <select class="select-input" id="api-difficulty">
-          <option value="all" selected>Todas / Mix</option>
-          <option value="easy">Fácil (Easy)</option>
-          <option value="medium">Media (Medium)</option>
-          <option value="hard">Difícil (Hard)</option>
-        </select>
-      </div>
-    </div>
-
-    <div class="grid-2">
-      <!-- SELECTOR DE CATEGORÍA (categories) -->
-      <div class="form-group">
-        <label>Categoría</label>
-        <select class="select-input" id="api-category">
-          <option value="all" selected>Todas las Categorías</option>
-          <option value="music">Música</option>
-          <option value="film_and_tv">Cine y Televisión</option>
-          <option value="geography">Geografía</option>
-          <option value="history">Historia</option>
-          <option value="science">Ciencia y Naturaleza</option>
-          <option value="general_knowledge">Cultura General</option>
-          <option value="food_and_drink">Comida y Bebida</option>
-          <option value="sport_and_leisure">Deportes y Tiempo Libre</option>
-          <option value="society_and_culture">Sociedad y Cultura</option>
-          <option value="arts_and_literature">Arte y Literatura</option>
+          <option value="all" selected>All / Mixed</option>
+          <option value="easy">Easy</option>
+          <option value="medium">Medium</option>
+          <option value="hard">Hard</option>
         </select>
       </div>
 
-      <!-- CANTIDAD DE PREGUNTAS (limit) -->
       <div class="form-group">
-        <label>Cant. Tarjetas</label>
+        <label>Cards Count</label>
         <select class="select-input" id="api-limit">
-          <option value="10">10 Tarjetas</option>
-          <option value="15">15 Tarjetas</option>
-          <option value="20">20 Tarjetas</option>
-          <option value="25" selected>25 Tarjetas</option>
+          <option value="10">10 Cards</option>
+          <option value="15">15 Cards</option>
+          <option value="20">20 Cards</option>
+          <option value="25" selected>25 Cards</option>
         </select>
       </div>
     </div>
 
-    <!-- TIPO DE CONTENIDO Y MULTIMEDIA -->
-    <div class="form-group">
-      <label>Preguntas Visuales / Imágenes</label>
-      <select class="select-input" id="api-images">
-        <option value="all" selected>Incluir imágenes si están disponibles</option>
-        <option value="text_only">Solo texto plano</option>
-      </select>
+    <!-- MULTI-CATEGORY CHECKBOXES -->
+    <div class="config-section-title">Select Categories</div>
+    <div class="categories-box">
+      <div class="category-actions">
+        <span style="font-size:0.75rem; color:#a0a5b5; font-weight:600;">Choose one, multiple, or all</span>
+        <button type="button" class="toggle-all-btn" onclick="toggleAllCategories()">Toggle All</button>
+      </div>
+      <div class="categories-grid" id="categories-container">
+        <label class="category-item"><input type="checkbox" value="music" checked> Music</label>
+        <label class="category-item"><input type="checkbox" value="film_and_tv" checked> Film & TV</label>
+        <label class="category-item"><input type="checkbox" value="geography" checked> Geography</label>
+        <label class="category-item"><input type="checkbox" value="history" checked> History</label>
+        <label class="category-item"><input type="checkbox" value="science" checked> Science</label>
+        <label class="category-item"><input type="checkbox" value="general_knowledge" checked> General Knowledge</label>
+        <label class="category-item"><input type="checkbox" value="food_and_drink" checked> Food & Drink</label>
+        <label class="category-item"><input type="checkbox" value="sport_and_leisure" checked> Sports & Leisure</label>
+        <label class="category-item"><input type="checkbox" value="society_and_culture" checked> Society & Culture</label>
+        <label class="category-item"><input type="checkbox" value="arts_and_literature" checked> Arts & Literature</label>
+      </div>
     </div>
 
-    <button class="btn-start" id="start-btn" onclick="startGame()">¡Iniciar Nuevo Juego!</button>
-    <div class="loading-status" id="loading-status">Consultando The Trivia API v2...</div>
+    <button class="btn-start" id="start-btn" onclick="startGame()">Start New Game!</button>
+    <div class="loading-status" id="loading-status">Fetching questions from API...</div>
+    <div class="error-box" id="error-box">Failed to connect to the API. Please select at least one category or check your internet.</div>
   </div>
 
 
-  <!-- INTERFAZ PRINCIPAL DE JUEGO -->
+  <!-- MAIN GAME INTERFACE -->
   <div class="game-interface" id="game-interface">
     <header>
       <h1>TRIVIA FLASHCARDS</h1>
@@ -604,27 +713,38 @@
     </header>
 
     <div class="deck-container">
-      <div class="card-tracker" id="card-tracker">TARJETA 1 DE 25</div>
+      <div class="card-tracker" id="card-tracker">CARD 1 OF 25</div>
 
       <div class="flashcard-wrapper" onclick="flipCard()">
         <div class="flashcard" id="flashcard">
+          <!-- CARD FRONT -->
           <div class="card-face card-front">
-            <span class="category-badge" id="card-category">CATEGORÍA</span>
-            <div class="card-content">
-              <img id="card-image" class="card-image" style="display:none;" src="" alt="Imagen de pregunta">
-              <span id="card-question-text">Cargando...</span>
+            <span class="category-badge" id="card-category">CATEGORY</span>
+            
+            <div class="card-body">
+              <img id="card-image" class="card-image" style="display:none;" src="" alt="Question Image">
+              <div class="question-text" id="card-question-text">Loading question...</div>
+              <div class="options-grid" id="card-options"></div>
             </div>
-            <div class="card-hint">Toca para ver la respuesta</div>
+
+            <div class="card-footer">Tap card to flip & reveal answer</div>
           </div>
+
+          <!-- CARD BACK -->
           <div class="card-face card-back">
-            <span class="category-badge">RESPUESTA</span>
-            <div class="card-content" id="card-answer">Cargando...</div>
-            <div class="card-hint">Toca para volver</div>
+            <span class="category-badge">ANSWER REVEAL</span>
+            
+            <div class="card-body">
+              <div class="answer-title">Correct Answer</div>
+              <div class="correct-answer-box" id="card-answer">Loading answer...</div>
+            </div>
+
+            <div class="card-footer">Tap card to flip back</div>
           </div>
         </div>
       </div>
 
-      <!-- BOTONES DE PUNTOS -->
+      <!-- POINT CONTROLS -->
       <div class="card-actions">
         <div class="scoring-group">
           <div class="scoring-label" id="label-p1">AME</div>
@@ -632,7 +752,7 @@
             <button class="score-btn btn-sub" onclick="addPoint('p1', -1, event)">-1</button>
             <button class="score-btn" id="btn-p1-add" onclick="addPoint('p1', 1, event)">+1</button>
           </div>
-          <div class="card-history" id="status-p1">Puntos tarjeta: 0</div>
+          <div class="card-history" id="status-p1">Card points: 0</div>
         </div>
 
         <div class="scoring-group">
@@ -641,49 +761,40 @@
             <button class="score-btn btn-sub" onclick="addPoint('p2', -1, event)">-1</button>
             <button class="score-btn" id="btn-p2-add" onclick="addPoint('p2', 1, event)">+1</button>
           </div>
-          <div class="card-history" id="status-p2">Puntos tarjeta: 0</div>
+          <div class="card-history" id="status-p2">Card points: 0</div>
         </div>
       </div>
 
-      <!-- NAVEGACIÓN -->
+      <!-- NAVIGATION -->
       <div class="nav-controls">
-        <button class="nav-btn" id="btn-prev" onclick="prevCard()" disabled>Anterior</button>
-        <button class="nav-btn" id="btn-next" onclick="nextCard()">Siguiente</button>
-        <button class="nav-btn finish-btn" onclick="showResults()">Ver Ganador</button>
+        <button class="nav-btn" id="btn-prev" onclick="prevCard()" disabled>Previous</button>
+        <button class="nav-btn" id="btn-next" onclick="nextCard()">Next</button>
+        <button class="nav-btn finish-btn" onclick="showResults()">See Winner</button>
       </div>
     </div>
   </div>
 
 
-  <!-- MODAL DE RESULTADOS -->
+  <!-- RESULTS MODAL -->
   <div class="modal-overlay" id="results-modal">
     <div class="modal-content">
-      <div class="modal-title">RESULTADOS FINALES</div>
+      <div class="modal-title">FINAL RESULTS</div>
       
       <div class="winner-announcement" id="winner-announcement">
-        CALCULANDO GANADOR...
+        CALCULATING WINNER...
       </div>
 
       <div class="analysis-section">
-        <h3>ANÁLISIS DE CONOCIMIENTOS</h3>
-        <div id="analysis-text">Cargando desglose...</div>
+        <h3>KNOWLEDGE ANALYSIS</h3>
+        <div id="analysis-text">Loading breakdown...</div>
       </div>
 
-      <button class="restart-btn" onclick="returnToSetup()">Nueva Partida / Configurar</button>
+      <button class="restart-btn" onclick="returnToSetup()">New Game / Setup</button>
     </div>
   </div>
 
 
   <script>
-    // BANCO LOCAL DE RESPALDO
-    const BACKUP_BANK = [
-      { category: "FILM & TV", question: "¿Cómo se llama el universo animado de Spiderman con Miles Morales?", answer: "Spider-Verse" },
-      { category: "MUSIC", question: "¿Qué cantante argentina lanzó el exitoso álbum 'Calambre'?", answer: "Nathy Peluso" },
-      { category: "GAMING", question: "En 'The Last of Us', ¿cuál es el hongo que desencadena la infección?", answer: "Cordyceps" },
-      { category: "SCIENCE", question: "¿Qué anfibio puede regenerar extremidades y partes de su corazón?", answer: "El Ajolote" },
-      { category: "CULTURE", question: "En 31 Minutos, ¿cuál es el apellido del conejo rojo periodista?", answer: "Bodoque" }
-    ];
-
     let player1 = { name: "Ame", color: "#ff70a6" };
     let player2 = { name: "Pedro", color: "#70d6ff" };
 
@@ -693,7 +804,7 @@
     let scoreP2 = 0;
     let cardScores = [];
 
-    // SELECTORES DE COLOR
+    // COLOR PICKERS
     document.querySelectorAll('#p1-colors .color-opt').forEach(opt => {
       opt.addEventListener('click', (e) => {
         document.querySelectorAll('#p1-colors .color-opt').forEach(o => o.classList.remove('selected'));
@@ -714,64 +825,70 @@
       return [...arr].sort(() => Math.random() - 0.5);
     }
 
-    // CONEXIÓN DINÁMICA CON PARÁMETROS OFICIALES DE THE TRIVIA API v2
-    async function fetchAdvancedTriviaQuestions() {
-      const language = document.getElementById('api-language').value;
-      const difficulty = document.getElementById('api-difficulty').value;
-      const category = document.getElementById('api-category').value;
-      const limit = document.getElementById('api-limit').value;
-      const imagePref = document.getElementById('api-images').value;
+    function toggleAllCategories() {
+      const checkboxes = document.querySelectorAll('#categories-container input[type="checkbox"]');
+      const allChecked = Array.from(checkboxes).every(cb => cb.checked);
+      checkboxes.forEach(cb => cb.checked = !allChecked);
+    }
 
-      // Construcción dinámica de URL según parámetros oficiales
+    // FETCH LIVE QUESTIONS FROM THE TRIVIA API v2
+    async function fetchLiveApiQuestions() {
+      const difficulty = document.getElementById('api-difficulty').value;
+      const limit = document.getElementById('api-limit').value;
+
+      // Collect checked categories
+      const checkedCats = Array.from(document.querySelectorAll('#categories-container input[type="checkbox"]:checked'))
+                               .map(cb => cb.value);
+
+      if (checkedCats.length === 0) {
+        throw new Error("No categories selected");
+      }
+
       let url = `https://the-trivia-api.com/v2/questions?limit=${limit}`;
 
-      if (language && language !== 'en') {
-        url += `&language=${language}`;
-      }
-      if (difficulty !== 'all') {
-        url += `&difficulties=${difficulty}`;
-      }
-      if (category !== 'all') {
-        url += `&categories=${category}`;
-      }
+      if (difficulty !== 'all') url += `&difficulties=${difficulty}`;
+      if (checkedCats.length > 0) url += `&categories=${checkedCats.join(',')}`;
 
-      try {
-        const response = await fetch(url);
-        if (!response.ok) throw new Error("API Status Error " + response.status);
-        const data = await response.json();
+      const response = await fetch(url);
+      if (!response.ok) throw new Error("API HTTP Error " + response.status);
+      const data = await response.json();
 
-        if (data && data.length > 0) {
-          let questions = data.map(item => {
-            let questionText = item.question ? item.question.text : "Sin pregunta";
-            let answerText = item.correctAnswer || "Sin respuesta";
+      if (!data || data.length === 0) throw new Error("Empty API response");
 
-            return {
-              category: item.category ? item.category.replace(/_/g, " ").toUpperCase() : "GENERAL",
-              question: questionText,
-              answer: answerText,
-              imageUrl: (imagePref === 'all' && item.images && item.images.length > 0) ? item.images[0].url : null
-            };
-          });
+      return data.map(item => {
+        const correctAnswer = item.correctAnswer || "N/A";
+        const incorrectAnswers = item.incorrectAnswers || [];
+        const allOptions = shuffleArray([correctAnswer, ...incorrectAnswers]);
 
-          return questions;
-        }
-      } catch (err) {
-        console.warn("Error al conectar con The Trivia API. Usando respaldo:", err);
-      }
-
-      return shuffleArray(BACKUP_BANK);
+        return {
+          category: item.category ? item.category.replace(/_/g, " ").toUpperCase() : "GENERAL",
+          question: item.question ? item.question.text : "No Question Text",
+          answer: correctAnswer,
+          options: allOptions,
+          imageUrl: (item.images && item.images.length > 0) ? item.images[0].url : null
+        };
+      });
     }
 
     async function startGame() {
-      player1.name = document.getElementById('p1-name-input').value.trim() || "Jugador 1";
-      player2.name = document.getElementById('p2-name-input').value.trim() || "Jugador 2";
+      document.getElementById('error-box').style.display = 'none';
+      player1.name = document.getElementById('p1-name-input').value.trim() || "Player 1";
+      player2.name = document.getElementById('p2-name-input').value.trim() || "Player 2";
 
       document.getElementById('start-btn').disabled = true;
       document.getElementById('loading-status').style.display = 'block';
 
-      currentDeck = await fetchAdvancedTriviaQuestions();
+      try {
+        currentDeck = await fetchLiveApiQuestions();
+      } catch (err) {
+        console.error("Error connecting to API:", err);
+        document.getElementById('loading-status').style.display = 'none';
+        document.getElementById('start-btn').disabled = false;
+        document.getElementById('error-box').style.display = 'block';
+        return;
+      }
 
-      // Aplicar colores y nombres
+      // Apply player names and dynamic theme colors
       document.getElementById('display-p1-name').innerText = player1.name;
       document.getElementById('display-p1-name').style.color = player1.color;
       document.getElementById('label-p1').innerText = player1.name;
@@ -808,10 +925,23 @@
 
     function updateCardUI() {
       const q = currentDeck[currentIndex];
-      document.getElementById('card-tracker').innerText = `TARJETA ${currentIndex + 1} DE ${currentDeck.length}`;
+      document.getElementById('card-tracker').innerText = `CARD ${currentIndex + 1} OF ${currentDeck.length}`;
       document.getElementById('card-category').innerText = q.category;
       document.getElementById('card-question-text').innerText = q.question;
       document.getElementById('card-answer').innerText = q.answer;
+
+      // Render Multiple Choice Options (A, B, C, D)
+      const optionsContainer = document.getElementById('card-options');
+      optionsContainer.innerHTML = '';
+      if (q.options && q.options.length > 0) {
+        const letters = ['A', 'B', 'C', 'D'];
+        q.options.forEach((opt, idx) => {
+          const optDiv = document.createElement('div');
+          optDiv.className = 'option-item';
+          optDiv.innerHTML = `<span class="option-letter">${letters[idx] || ''}:</span> <span>${opt}</span>`;
+          optionsContainer.appendChild(optDiv);
+        });
+      }
 
       const imgElem = document.getElementById('card-image');
       if (q.imageUrl) {
@@ -824,8 +954,8 @@
 
       document.getElementById('flashcard').classList.remove('flipped');
 
-      document.getElementById('status-p1').innerText = `Puntos tarjeta: ${cardScores[currentIndex].p1}`;
-      document.getElementById('status-p2').innerText = `Puntos tarjeta: ${cardScores[currentIndex].p2}`;
+      document.getElementById('status-p1').innerText = `Card points: ${cardScores[currentIndex].p1}`;
+      document.getElementById('status-p2').innerText = `Card points: ${cardScores[currentIndex].p2}`;
 
       document.getElementById('btn-prev').disabled = currentIndex === 0;
       document.getElementById('btn-next').disabled = currentIndex === currentDeck.length - 1;
@@ -841,11 +971,11 @@
       if (player === 'p1') {
         cardScores[currentIndex].p1 += amount;
         scoreP1 += amount;
-        document.getElementById('status-p1').innerText = `Puntos tarjeta: ${cardScores[currentIndex].p1}`;
+        document.getElementById('status-p1').innerText = `Card points: ${cardScores[currentIndex].p1}`;
       } else {
         cardScores[currentIndex].p2 += amount;
         scoreP2 += amount;
-        document.getElementById('status-p2').innerText = `Puntos tarjeta: ${cardScores[currentIndex].p2}`;
+        document.getElementById('status-p2').innerText = `Card points: ${cardScores[currentIndex].p2}`;
       }
     }
 
@@ -869,11 +999,11 @@
       const analysisText = document.getElementById('analysis-text');
 
       if (scoreP1 > scoreP2) {
-        winnerText.innerHTML = `<span style="color:${player1.color};">¡${player1.name.toUpperCase()} GANA LA PARTIDA!</span><br><small style="font-size:1rem; color:#fff;">${scoreP1} pts vs ${scoreP2} pts</small>`;
+        winnerText.innerHTML = `<span style="color:${player1.color};">${player1.name.toUpperCase()} WINS THE GAME!</span><br><small style="font-size:1rem; color:#fff;">${scoreP1} pts vs ${scoreP2} pts</small>`;
       } else if (scoreP2 > scoreP1) {
-        winnerText.innerHTML = `<span style="color:${player2.color};">¡${player2.name.toUpperCase()} GANA LA PARTIDA!</span><br><small style="font-size:1rem; color:#fff;">${scoreP2} pts vs ${scoreP1} pts</small>`;
+        winnerText.innerHTML = `<span style="color:${player2.color};">${player2.name.toUpperCase()} WINS THE GAME!</span><br><small style="font-size:1rem; color:#fff;">${scoreP2} pts vs ${scoreP1} pts</small>`;
       } else {
-        winnerText.innerHTML = `<span style="color:#ffffff;">¡EMPATE TÁCTICO!</span><br><small style="font-size:1rem; color:#fff;">Ambos obtuvieron ${scoreP1} pts</small>`;
+        winnerText.innerHTML = `<span style="color:#ffffff;">TIE GAME!</span><br><small style="font-size:1rem; color:#fff;">Both scored ${scoreP1} pts</small>`;
       }
 
       const stats = {};
@@ -887,20 +1017,20 @@
 
       let categoryAnalysisHTML = "";
       for (const [cat, scores] of Object.entries(stats)) {
-        let domain = "Empate";
+        let domain = "Tie";
         if (scores.p1 > scores.p2) domain = `<span style="color:${player1.color}">${player1.name}</span>`;
         else if (scores.p2 > scores.p1) domain = `<span style="color:${player2.color}">${player2.name}</span>`;
 
         categoryAnalysisHTML += `
           <div style="margin-bottom: 8px; font-size: 0.9rem; display:flex; justify-content:space-between;">
             <strong>${cat}:</strong>
-            <span>Dominio: ${domain} (${scores.p1} vs ${scores.p2})</span>
+            <span>Dominated: ${domain} (${scores.p1} vs ${scores.p2})</span>
           </div>
         `;
       }
 
       analysisText.innerHTML = `
-        <p style="margin-bottom:12px;"><strong>Puntajes Totales por Área:</strong></p>
+        <p style="margin-bottom:12px;"><strong>Scores by Category:</strong></p>
         ${categoryAnalysisHTML}
       `;
 
