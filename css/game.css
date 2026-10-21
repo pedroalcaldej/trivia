@@ -38,6 +38,7 @@ h1 {
   border: 1px solid #2a2d3d;
   flex: 1 1 110px;
   max-width: 170px;
+  position: relative;
 }
 
 .player-name {
@@ -54,8 +55,11 @@ h1 {
   font-size: 1rem;
   font-weight: 700;
   color: #70778b;
-  margin-top: 4px;
   letter-spacing: 1px;
+}
+
+.secret-score.revealed {
+  color: #70d6ff;
 }
 
 .deck-container {
@@ -310,3 +314,31 @@ h1 {
 
 .finish-btn { background: #2e7d32; border-color: #388e3c; }
 .finish-btn:hover { background: #388e3c; }
+
+.score-peek-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.btn-eye-peek {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 0.95rem;
+  opacity: 0.6;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  transition: opacity 0.2s, transform 0.1s;
+}
+
+.btn-eye-peek:hover {
+  opacity: 1;
+}
+
+.btn-eye-peek:active {
+  transform: scale(1.15);
+}

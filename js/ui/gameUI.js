@@ -5,20 +5,50 @@ import { playClickSound, playWindSound } from '../audio.js';
 export function buildDynamicBoardAndControls() {
   const sbContainer = document.getElementById('scoreboard-container');
   sbContainer.innerHTML = '';
+  
   state.players.forEach(p => {
     const card = document.createElement('div');
     card.className = 'player-card';
     card.style.borderTop = `4px solid ${p.color}`;
     card.innerHTML = `
       <div class="player-name" style="color:${p.color};">${p.name}</div>
-      <div class="secret-score">??? PTS</div>
+      <div class="score-peek-container">
+        <div class="secret-score" id="score-val-${p.id}">??? PTS</div>
+        <button class="btn-eye-peek" id="btn-eye-${p.id}" title="Mantén presionado para ver puntaje">👁️‍🗨️</button>
+      </div>
     `;
     sbContainer.appendChild(card);
+
+    // Eventos de revelado (Mouse & Touch)
+    const eyeBtn = card.querySelector(`#btn-eye-${p.id}`);
+    const scoreVal = card.querySelector(`#score-val-${p.id}`);
+
+    const showScore = (e) => {
+      e.preventDefault();
+      const totalScore = state.cardScores.reduce((acc, cardItem) => acc + (cardItem.scores[p.id] || 0), 0);
+      scoreVal.innerText = `${totalScore} PTS`;
+      scoreVal.classList.add('revealed');
+      eyeBtn.innerText = '👁️';
+    };
+
+    const hideScore = (e) => {
+      if (e) e.preventDefault();
+      scoreVal.innerText = '??? PTS';
+      scoreVal.classList.remove('revealed');
+      eyeBtn.innerText = '👁️‍🗨️';
+    };
+
+    eyeBtn.addEventListener('mousedown', showScore);
+    eyeBtn.addEventListener('mouseup', hideScore);
+    eyeBtn.addEventListener('mouseleave', hideScore);
+    eyeBtn.addEventListener('touchstart', showScore);
+    eyeBtn.addEventListener('touchend', hideScore);
   });
 
   const isSpanish = isSpanishEngine();
   const controlsContainer = document.getElementById('scoring-controls-container');
   controlsContainer.innerHTML = '';
+
   state.players.forEach(p => {
     const group = document.createElement('div');
     group.className = 'scoring-group';
@@ -32,7 +62,6 @@ export function buildDynamicBoardAndControls() {
     `;
     controlsContainer.appendChild(group);
 
-    // Scoring Listeners
     group.querySelector(`#btn-sub-${p.id}`).addEventListener('click', (e) => addPoint(p.id, -1, e));
     group.querySelector(`#btn-add-${p.id}`).addEventListener('click', (e) => addPoint(p.id, 1, e));
   });
@@ -46,10 +75,9 @@ export function updateCardUI() {
     ? `TARJETA ${state.currentIndex + 1} DE ${state.currentDeck.length}` 
     : `CARD ${state.currentIndex + 1} OF ${state.currentDeck.length}`;
 
-  document.getElementById('btn-menu').innerText = isSpanish ? "Menú Principal" : "Main Menu";
+  document.getElementById('btn-menu').innerText = isSpanish ? "Menú" : "Menu";
   document.getElementById('btn-prev').innerText = isSpanish ? "Anterior" : "Previous";
   document.getElementById('btn-next').innerText = isSpanish ? "Siguiente" : "Next";
-  document.getElementById('btn-finish').innerText = isSpanish ? "Ver Ganador" : "See Winner";
 
   document.getElementById('card-category').innerText = q.category;
   document.getElementById('card-question-text').innerText = q.question;
@@ -78,9 +106,7 @@ export function updateCardUI() {
     const score = state.cardScores[state.currentIndex].scores[p.id] || 0;
     const statusElem = document.getElementById(`status-p${p.id}`);
     if (statusElem) {
-      statusElem.innerText = isSpanish 
-        ? `Pts tarjeta: ${score}` 
-        : `Card pts: ${score}`;
+      statusElem.innerText = isSpanish ? `Pts tarjeta: ${score}` : `Card pts: ${score}`;
     }
 
     const btnAdd = document.getElementById(`btn-add-${p.id}`);

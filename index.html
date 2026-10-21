@@ -148,7 +148,6 @@
         <button class="nav-btn" id="btn-prev" disabled>Anterior</button>
         <button class="nav-btn menu-btn" id="btn-menu">Menú Principal</button>
         <button class="nav-btn" id="btn-next">Siguiente</button>
-        <button class="nav-btn finish-btn" id="btn-finish">Ver Ganador</button>
       </div>
     </div>
   </div>
@@ -165,6 +164,39 @@
       </div>
 
       <button class="restart-btn" id="btn-modal-restart">Nuevo Juego / Configuración</button>
+    </div>
+  </div>
+
+<!-- MODAL DE MENÚ DE PAUSA -->
+  <div class="modal-overlay" id="pause-modal">
+    <div class="modal-content">
+      <div class="modal-title" id="pause-modal-title">MENÚ DE PAUSA</div>
+
+      <div class="menu-options-list">
+        <button class="menu-opt-btn primary" id="btn-pause-resume">Reanudar Juego</button>
+        <button class="menu-opt-btn" id="btn-pause-finish">Terminar Partida y Ver Ganador</button>
+        <button class="menu-opt-btn" id="btn-pause-exit">Salir al Menú Principal</button>
+      </div>
+
+      <div class="shortcuts-box">
+        <div class="shortcuts-title" id="lbl-shortcuts-title">Atajos de Teclado</div>
+        <div class="shortcut-row">
+          <span id="lbl-shortcut-prev">Pregunta Anterior</span>
+          <span class="kbd-badge">← Flecha Izq</span>
+        </div>
+        <div class="shortcut-row">
+          <span id="lbl-shortcut-next">Pregunta Siguiente</span>
+          <span class="kbd-badge">Flecha Der →</span>
+        </div>
+        <div class="shortcut-row">
+          <span id="lbl-shortcut-flip">Voltear Tarjeta</span>
+          <span class="kbd-badge">Espacio</span>
+        </div>
+        <div class="shortcut-row">
+          <span id="lbl-shortcut-menu">Abrir / Cerrar Menú</span>
+          <span class="kbd-badge">ESC</span>
+        </div>
+      </div>
     </div>
   </div>
 

@@ -78,3 +78,76 @@
   letter-spacing: 1px;
   cursor: pointer;
 }
+
+.menu-options-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.menu-opt-btn {
+  width: 100%;
+  padding: 14px;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border: 1px solid #33394f;
+  background: #202433;
+  color: #ffffff;
+  cursor: pointer;
+}
+
+.menu-opt-btn:hover {
+  background: #2b3044;
+}
+
+.menu-opt-btn.primary {
+  background: #ff70a6;
+  color: #0d0e12;
+  border: none;
+}
+
+.menu-opt-btn.primary:hover {
+  background: #ff85b3;
+}
+
+.shortcuts-box {
+  background: #0d0e12;
+  border: 1px solid #252938;
+  border-radius: 10px;
+  padding: 14px;
+  text-align: left;
+  margin-bottom: 20px;
+}
+
+.shortcuts-title {
+  font-size: 0.8rem;
+  font-weight: 800;
+  color: #70d6ff;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 10px;
+}
+
+.shortcut-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.82rem;
+  color: #a0a5b5;
+  margin-bottom: 6px;
+}
+
+.kbd-badge {
+  background: #1a1d28;
+  border: 1px solid #3b4158;
+  border-radius: 4px;
+  padding: 2px 8px;
+  font-family: monospace;
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 0.75rem;
+}

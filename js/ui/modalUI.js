@@ -1,7 +1,28 @@
 import { state } from '../state.js';
 import { isSpanishEngine } from '../i18n.js';
 
+export function openPauseMenu() {
+  const isSpanish = isSpanishEngine();
+  document.getElementById('pause-modal-title').innerText = isSpanish ? "MENÚ DE PAUSA" : "PAUSE MENU";
+  document.getElementById('btn-pause-resume').innerText = isSpanish ? "Reanudar Juego" : "Resume Game";
+  document.getElementById('btn-pause-finish').innerText = isSpanish ? "Terminar Partida y Ver Ganador" : "Finish Game & See Winner";
+  document.getElementById('btn-pause-exit').innerText = isSpanish ? "Salir al Menú Principal" : "Exit to Main Menu";
+
+  document.getElementById('lbl-shortcuts-title').innerText = isSpanish ? "Atajos de Teclado" : "Keyboard Shortcuts";
+  document.getElementById('lbl-shortcut-prev').innerText = isSpanish ? "Pregunta Anterior" : "Previous Question";
+  document.getElementById('lbl-shortcut-next').innerText = isSpanish ? "Pregunta Siguiente" : "Next Question";
+  document.getElementById('lbl-shortcut-flip').innerText = isSpanish ? "Voltear Tarjeta" : "Flip Flashcard";
+  document.getElementById('lbl-shortcut-menu').innerText = isSpanish ? "Abrir / Cerrar Menú" : "Open / Close Menu";
+
+  document.getElementById('pause-modal').classList.add('active');
+}
+
+export function closePauseMenu() {
+  document.getElementById('pause-modal').classList.remove('active');
+}
+
 export function showResults() {
+  closePauseMenu();
   const modal = document.getElementById('results-modal');
   const winnerText = document.getElementById('winner-announcement');
   const analysisText = document.getElementById('analysis-text');
@@ -90,6 +111,7 @@ export function showResults() {
 }
 
 export function returnToSetup() {
+  closePauseMenu();
   document.getElementById('results-modal').classList.remove('active');
   document.getElementById('game-interface').style.display = 'none';
   document.getElementById('setup-screen').style.display = 'block';

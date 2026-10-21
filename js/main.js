@@ -6,9 +6,9 @@ import { fetchSpanishGeminiApi } from './api/gemini.js';
 import { fetchEnglishTriviaApi } from './api/trivia-api.js';
 import { renderPlayerInputs, toggleAllCategories, startLoadingAnimation, stopLoadingAnimation } from './ui/setupUI.js';
 import { buildDynamicBoardAndControls, updateCardUI, flipCard } from './ui/gameUI.js';
-import { showResults, returnToSetup } from './ui/modalUI.js';
+import { showResults, returnToSetup, openPauseMenu, closePauseMenu } from './ui/modalUI.js';
 
-// Global Bounce & Audio Click listener for buttons
+// Rebotador visual y sonido global
 document.addEventListener('click', (e) => {
   const btn = e.target.closest('button, .color-opt, .category-item');
   if (btn) {
@@ -18,26 +18,63 @@ document.addEventListener('click', (e) => {
   }
 });
 
-// INITIALIZATION
+// ESCUCHADOR GLOBAL DE ATAJOS DE TECLADO
+document.addEventListener('keydown', (e) => {
+  const gameActive = document.getElementById('game-interface').style.display === 'flex';
+  const pauseModalActive = document.getElementById('pause-modal').classList.contains('active');
+  const resultsModalActive = document.getElementById('results-modal').classList.contains('active');
+
+  // Tecla ESC: abre/cierra el menú de pausa
+  if (e.key === 'Escape') {
+    if (resultsModalActive) return;
+    if (gameActive) {
+      if (pauseModalActive) {
+        closePauseMenu();
+      } else {
+        openPauseMenu();
+      }
+    }
+    return;
+  }
+
+  // Atajos dentro del juego (no funcionan si se está escribiendo en un input o si hay un modal abierto)
+  if (gameActive && !pauseModalActive && !resultsModalActive && e.target.tagName !== 'INPUT') {
+    if (e.key === 'ArrowLeft') {
+      e.preventDefault();
+      prevCard();
+    } else if (e.key === 'ArrowRight') {
+      e.preventDefault();
+      nextCard();
+    } else if (e.key === ' ' || e.code === 'Space') {
+      e.preventDefault();
+      flipCard();
+    }
+  }
+});
+
+// INICIALIZACIÓN
 window.addEventListener('DOMContentLoaded', () => {
   const savedKey = getSavedApiKey();
   if (savedKey) {
     document.getElementById('gemini-key-input').value = savedKey;
   }
 
-  // Event Listeners
   document.getElementById('engine-selector').addEventListener('change', handleEngineChange);
   document.getElementById('gemini-key-input').addEventListener('change', saveApiKeyLocally);
   document.getElementById('player-count-select').addEventListener('change', renderPlayerInputs);
   document.getElementById('btn-toggle-all').addEventListener('click', toggleAllCategories);
   document.getElementById('start-btn').addEventListener('click', startGame);
 
-  // Game UI Listeners
+  // Escuchadores de interfaz de juego
   document.getElementById('flashcard-wrapper').addEventListener('click', flipCard);
   document.getElementById('btn-prev').addEventListener('click', prevCard);
   document.getElementById('btn-next').addEventListener('click', nextCard);
-  document.getElementById('btn-menu').addEventListener('click', confirmReturnToMenu);
-  document.getElementById('btn-finish').addEventListener('click', showResults);
+  document.getElementById('btn-menu').addEventListener('click', openPauseMenu);
+
+  // Escuchadores del Menú de Pausa
+  document.getElementById('btn-pause-resume').addEventListener('click', closePauseMenu);
+  document.getElementById('btn-pause-finish').addEventListener('click', showResults);
+  document.getElementById('btn-pause-exit').addEventListener('click', confirmExitToMenu);
   document.getElementById('btn-modal-restart').addEventListener('click', returnToSetup);
 
   handleEngineChange();
@@ -133,7 +170,7 @@ function prevCard() {
   }
 }
 
-function confirmReturnToMenu() {
+function confirmExitToMenu() {
   const isSpanish = isSpanishEngine();
   const msg = isSpanish 
     ? "¿Seguro que quieres salir al menú principal? La partida actual se reiniciará." 
