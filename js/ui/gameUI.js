@@ -14,35 +14,33 @@ export function buildDynamicBoardAndControls() {
       <div class="player-name" style="color:${p.color};">${p.name}</div>
       <div class="score-peek-container">
         <div class="secret-score" id="score-val-${p.id}">??? PTS</div>
-        <button class="btn-eye-peek" id="btn-eye-${p.id}" title="Mantén presionado para ver puntaje">👁️‍🗨️</button>
+        <button class="btn-eye-peek" id="btn-eye-${p.id}" title="Hacer clic para ver/ocultar puntaje">👁️‍🗨️</button>
       </div>
     `;
     sbContainer.appendChild(card);
 
-    // Eventos de revelado (Mouse & Touch)
+    // Evento de clic tipo Toggle para el botón de ojo
     const eyeBtn = card.querySelector(`#btn-eye-${p.id}`);
     const scoreVal = card.querySelector(`#score-val-${p.id}`);
 
-    const showScore = (e) => {
-      e.preventDefault();
-      const totalScore = state.cardScores.reduce((acc, cardItem) => acc + (cardItem.scores[p.id] || 0), 0);
-      scoreVal.innerText = `${totalScore} PTS`;
-      scoreVal.classList.add('revealed');
-      eyeBtn.innerText = '👁️';
-    };
+    eyeBtn.addEventListener('click', (e) => {
+      e.stopPropagation(); // Evita interferencias con otros escuchadores globales
+      
+      const isRevealed = scoreVal.classList.contains('revealed');
 
-    const hideScore = (e) => {
-      if (e) e.preventDefault();
-      scoreVal.innerText = '??? PTS';
-      scoreVal.classList.remove('revealed');
-      eyeBtn.innerText = '👁️‍🗨️';
-    };
-
-    eyeBtn.addEventListener('mousedown', showScore);
-    eyeBtn.addEventListener('mouseup', hideScore);
-    eyeBtn.addEventListener('mouseleave', hideScore);
-    eyeBtn.addEventListener('touchstart', showScore);
-    eyeBtn.addEventListener('touchend', hideScore);
+      if (isRevealed) {
+        // Ocultar puntaje
+        scoreVal.innerText = '??? PTS';
+        scoreVal.classList.remove('revealed');
+        eyeBtn.innerText = '👁️‍🗨️';
+      } else {
+        // Calcular y mostrar puntaje total acumulado
+        const totalScore = state.cardScores.reduce((acc, cardItem) => acc + (cardItem.scores[p.id] || 0), 0);
+        scoreVal.innerText = `${totalScore} PTS`;
+        scoreVal.classList.add('revealed');
+        eyeBtn.innerText = '👁️';
+      }
+    });
   });
 
   const isSpanish = isSpanishEngine();
@@ -114,6 +112,13 @@ export function updateCardUI() {
     if (btnAdd && btnSub) {
       btnAdd.disabled = (score >= 1);
       btnSub.disabled = (score <= -1);
+    }
+
+    // Asegurarse de que si el ojo ya estaba abierto, actualice el texto al cambiar de tarjeta
+    const scoreVal = document.getElementById(`score-val-${p.id}`);
+    if (scoreVal && scoreVal.classList.contains('revealed')) {
+      const totalScore = state.cardScores.reduce((acc, cardItem) => acc + (cardItem.scores[p.id] || 0), 0);
+      scoreVal.innerText = `${totalScore} PTS`;
     }
   });
 
