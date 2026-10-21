@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Trivia Flashcards Live: Ame vs Pedro</title>
+  <title>Trivia Flashcards Live: Multi-Player</title>
   <style>
     * {
       box-sizing: border-box;
@@ -29,7 +29,7 @@
       border-radius: 16px;
       padding: 25px;
       width: 100%;
-      max-width: 580px;
+      max-width: 620px;
       box-shadow: 0 10px 30px rgba(0,0,0,0.5);
       margin-top: 10px;
     }
@@ -90,13 +90,13 @@
 
     .color-picker-row {
       display: flex;
-      gap: 10px;
+      gap: 8px;
       margin-top: 8px;
     }
 
     .color-opt {
-      width: 30px;
-      height: 30px;
+      width: 28px;
+      height: 28px;
       border-radius: 50%;
       cursor: pointer;
       border: 2px solid transparent;
@@ -106,12 +106,21 @@
     .color-opt:hover { transform: scale(1.1); }
     .color-opt.selected { border-color: #ffffff; transform: scale(1.15); }
 
+    .players-setup-container {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
     .player-setup-box {
       background: #0d0e12;
-      padding: 14px;
+      padding: 12px 14px;
       border-radius: 10px;
       border: 1px solid #252938;
-      margin-bottom: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
     }
 
     .config-section-title {
@@ -224,7 +233,7 @@
     /* GAME INTERFACE */
     .game-interface {
       width: 100%;
-      max-width: 620px;
+      max-width: 650px;
       display: none;
       flex-direction: column;
       align-items: center;
@@ -245,37 +254,45 @@
       margin-bottom: 15px;
     }
 
+    /* DYNAMIC MULTI-PLAYER SCOREBOARD */
     .scoreboard {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 15px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
       margin-bottom: 10px;
+      width: 100%;
     }
 
     .player-card {
       background: #161820;
-      border-radius: 12px;
-      padding: 14px;
+      border-radius: 10px;
+      padding: 10px 12px;
       text-align: center;
       border: 1px solid #2a2d3d;
+      flex: 1 1 120px;
+      max-width: 180px;
     }
 
     .player-name {
-      font-size: 1.1rem;
+      font-size: 0.95rem;
       font-weight: 800;
       text-transform: uppercase;
       letter-spacing: 1px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     .secret-score {
-      font-size: 1.1rem;
+      font-size: 1rem;
       font-weight: 700;
       color: #70778b;
-      margin-top: 6px;
-      letter-spacing: 2px;
+      margin-top: 4px;
+      letter-spacing: 1px;
     }
 
-    /* ENHANCED FLASHCARD UI */
+    /* FLASHCARD CONTAINER */
     .deck-container {
       width: 100%;
       display: flex;
@@ -310,7 +327,6 @@
 
     .flashcard.flipped { transform: rotateY(180deg); }
 
-    /* CLEARLY DEFINED FRAME AND BORDER FOR CARDS */
     .card-face {
       position: absolute;
       width: 100%;
@@ -376,7 +392,6 @@
       border: 1px solid #3a3f55;
     }
 
-    /* STRUCTURED OPTIONS GRID */
     .options-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -405,7 +420,6 @@
       flex-shrink: 0;
     }
 
-    /* REVERSE FACE NO-SPOILER VISIBILITY */
     .card-back .card-body {
       visibility: hidden;
       opacity: 0;
@@ -445,16 +459,17 @@
       flex-shrink: 0;
     }
 
-    /* SCORING CONTROLS */
+    /* DYNAMIC MULTI-PLAYER SCORING CONTROLS */
     .card-actions {
       width: 100%;
       background: #161820;
       border: 1px solid #2a2d3d;
       border-radius: 12px;
       padding: 15px;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 15px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 12px;
       margin-bottom: 20px;
     }
 
@@ -462,29 +477,35 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 8px;
+      gap: 6px;
+      flex: 1 1 100px;
+      min-width: 90px;
     }
 
     .scoring-label {
-      font-size: 0.85rem;
+      font-size: 0.8rem;
       font-weight: 700;
       letter-spacing: 1px;
       text-transform: uppercase;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 100px;
     }
 
     .btn-row {
       display: flex;
-      gap: 8px;
+      gap: 6px;
       width: 100%;
     }
 
     .score-btn {
       flex: 1;
-      padding: 10px;
+      padding: 8px 4px;
       border: none;
-      border-radius: 8px;
+      border-radius: 6px;
       font-weight: 700;
-      font-size: 1.1rem;
+      font-size: 1rem;
       cursor: pointer;
       transition: all 0.15s ease;
       color: #ffffff;
@@ -494,10 +515,10 @@
     .btn-sub { background: #252938; color: #a0a5b5; }
 
     .card-history {
-      font-size: 0.8rem;
+      font-size: 0.75rem;
       font-weight: 600;
       color: #828a9e;
-      margin-top: 4px;
+      margin-top: 2px;
     }
 
     /* NAVIGATION */
@@ -570,12 +591,13 @@
     }
 
     .winner-announcement {
-      font-size: 1.4rem;
+      font-size: 1.3rem;
       font-weight: 700;
       padding: 15px;
       border-radius: 10px;
       background: #202433;
       margin-bottom: 20px;
+      line-height: 1.5;
     }
 
     .analysis-section {
@@ -617,31 +639,22 @@
     <div class="setup-title">TRIVIA LIVE API</div>
     <div class="setup-subtitle">Official English The Trivia API v2</div>
 
-    <!-- PLAYERS -->
-    <div class="player-setup-box">
-      <div class="grid-2">
-        <div class="form-group" style="margin-bottom:0;">
-          <label>Player 1</label>
-          <input type="text" class="input-text" id="p1-name-input" value="Ame">
-          <div class="color-picker-row" id="p1-colors">
-            <div class="color-opt selected" style="background:#ff70a6;" data-color="#ff70a6"></div>
-            <div class="color-opt" style="background:#70d6ff;" data-color="#70d6ff"></div>
-            <div class="color-opt" style="background:#a06cd5;" data-color="#a06cd5"></div>
-            <div class="color-opt" style="background:#ff9f1c;" data-color="#ff9f1c"></div>
-          </div>
-        </div>
+    <!-- NUMBER OF PLAYERS SELECTOR -->
+    <div class="form-group">
+      <label>Number of Players</label>
+      <select class="select-input" id="player-count-select" onchange="renderPlayerInputs()">
+        <option value="1">1 Player</option>
+        <option value="2" selected>2 Players</option>
+        <option value="3">3 Players</option>
+        <option value="4">4 Players</option>
+        <option value="5">5 Players</option>
+      </select>
+    </div>
 
-        <div class="form-group" style="margin-bottom:0;">
-          <label>Player 2</label>
-          <input type="text" class="input-text" id="p2-name-input" value="Pedro">
-          <div class="color-picker-row" id="p2-colors">
-            <div class="color-opt" style="background:#ff70a6;" data-color="#ff70a6"></div>
-            <div class="color-opt selected" style="background:#70d6ff;" data-color="#70d6ff"></div>
-            <div class="color-opt" style="background:#a06cd5;" data-color="#a06cd5"></div>
-            <div class="color-opt" style="background:#ff9f1c;" data-color="#ff9f1c"></div>
-          </div>
-        </div>
-      </div>
+    <!-- DYNAMIC PLAYERS CONTAINER -->
+    <div class="config-section-title">Players Setup</div>
+    <div class="players-setup-container" id="players-inputs-container">
+      <!-- Generated via JS -->
     </div>
 
     <!-- CONFIGURATIONS -->
@@ -700,15 +713,8 @@
   <div class="game-interface" id="game-interface">
     <header>
       <h1>TRIVIA FLASHCARDS</h1>
-      <div class="scoreboard">
-        <div class="player-card" id="card-p1">
-          <div class="player-name" id="display-p1-name">AME</div>
-          <div class="secret-score">??? PTS</div>
-        </div>
-        <div class="player-card" id="card-p2">
-          <div class="player-name" id="display-p2-name">PEDRO</div>
-          <div class="secret-score">??? PTS</div>
-        </div>
+      <div class="scoreboard" id="scoreboard-container">
+        <!-- Generated via JS -->
       </div>
     </header>
 
@@ -744,25 +750,9 @@
         </div>
       </div>
 
-      <!-- POINT CONTROLS -->
-      <div class="card-actions">
-        <div class="scoring-group">
-          <div class="scoring-label" id="label-p1">AME</div>
-          <div class="btn-row">
-            <button class="score-btn btn-sub" onclick="addPoint('p1', -1, event)">-1</button>
-            <button class="score-btn" id="btn-p1-add" onclick="addPoint('p1', 1, event)">+1</button>
-          </div>
-          <div class="card-history" id="status-p1">Card points: 0</div>
-        </div>
-
-        <div class="scoring-group">
-          <div class="scoring-label" id="label-p2">PEDRO</div>
-          <div class="btn-row">
-            <button class="score-btn btn-sub" onclick="addPoint('p2', -1, event)">-1</button>
-            <button class="score-btn" id="btn-p2-add" onclick="addPoint('p2', 1, event)">+1</button>
-          </div>
-          <div class="card-history" id="status-p2">Card points: 0</div>
-        </div>
+      <!-- DYNAMIC POINT CONTROLS -->
+      <div class="card-actions" id="scoring-controls-container">
+        <!-- Generated via JS -->
       </div>
 
       <!-- NAVIGATION -->
@@ -795,31 +785,52 @@
 
 
   <script>
-    let player1 = { name: "Ame", color: "#ff70a6" };
-    let player2 = { name: "Pedro", color: "#70d6ff" };
+    const DEFAULT_COLORS = ["#ff70a6", "#70d6ff", "#a06cd5", "#ff9f1c", "#2ec4b6"];
+    const DEFAULT_NAMES = ["Ame", "Pedro", "Player 3", "Player 4", "Player 5"];
 
+    let players = [];
     let currentDeck = [];
     let currentIndex = 0;
-    let scoreP1 = 0;
-    let scoreP2 = 0;
     let cardScores = [];
 
-    // COLOR PICKERS
-    document.querySelectorAll('#p1-colors .color-opt').forEach(opt => {
-      opt.addEventListener('click', (e) => {
-        document.querySelectorAll('#p1-colors .color-opt').forEach(o => o.classList.remove('selected'));
-        e.target.classList.add('selected');
-        player1.color = e.target.getAttribute('data-color');
-      });
-    });
+    // RENDER PLAYER INPUTS ON SETUP
+    function renderPlayerInputs() {
+      const count = parseInt(document.getElementById('player-count-select').value, 10);
+      const container = document.getElementById('players-inputs-container');
+      container.innerHTML = '';
 
-    document.querySelectorAll('#p2-colors .color-opt').forEach(opt => {
-      opt.addEventListener('click', (e) => {
-        document.querySelectorAll('#p2-colors .color-opt').forEach(o => o.classList.remove('selected'));
-        e.target.classList.add('selected');
-        player2.color = e.target.getAttribute('data-color');
-      });
-    });
+      for (let i = 0; i < count; i++) {
+        const pName = DEFAULT_NAMES[i];
+        const pColor = DEFAULT_COLORS[i];
+
+        const pBox = document.createElement('div');
+        pBox.className = 'player-setup-box';
+        pBox.innerHTML = `
+          <div style="display:flex; justify-size:space-between; align-items:center;">
+            <label style="font-size:0.75rem; font-weight:700; color:#a0a5b5;">PLAYER ${i + 1}</label>
+          </div>
+          <div style="display:flex; gap:10px; align-items:center;">
+            <input type="text" class="input-text p-name-input" data-index="${i}" value="${pName}">
+            <div class="color-picker-row" id="color-picker-p${i}">
+              ${DEFAULT_COLORS.map(c => `
+                <div class="color-opt ${c === pColor ? 'selected' : ''}" 
+                     style="background:${c};" 
+                     data-color="${c}" 
+                     onclick="selectPlayerColor(${i}, '${c}', this)">
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        `;
+        container.appendChild(pBox);
+      }
+    }
+
+    function selectPlayerColor(playerIndex, color, element) {
+      const parent = element.parentElement;
+      parent.querySelectorAll('.color-opt').forEach(opt => opt.classList.remove('selected'));
+      element.classList.add('selected');
+    }
 
     function shuffleArray(arr) {
       return [...arr].sort(() => Math.random() - 0.5);
@@ -836,7 +847,6 @@
       const difficulty = document.getElementById('api-difficulty').value;
       const limit = document.getElementById('api-limit').value;
 
-      // Collect checked categories
       const checkedCats = Array.from(document.querySelectorAll('#categories-container input[type="checkbox"]:checked'))
                                .map(cb => cb.value);
 
@@ -872,8 +882,24 @@
 
     async function startGame() {
       document.getElementById('error-box').style.display = 'none';
-      player1.name = document.getElementById('p1-name-input').value.trim() || "Player 1";
-      player2.name = document.getElementById('p2-name-input').value.trim() || "Player 2";
+
+      // Read players configuration
+      const count = parseInt(document.getElementById('player-count-select').value, 10);
+      players = [];
+
+      const nameInputs = document.querySelectorAll('.p-name-input');
+      for (let i = 0; i < count; i++) {
+        const nameVal = nameInputs[i] ? nameInputs[i].value.trim() : `Player ${i + 1}`;
+        const selectedColorOpt = document.querySelector(`#color-picker-p${i} .color-opt.selected`);
+        const colorVal = selectedColorOpt ? selectedColorOpt.getAttribute('data-color') : DEFAULT_COLORS[i];
+
+        players.push({
+          id: i,
+          name: nameVal || `Player ${i + 1}`,
+          color: colorVal,
+          totalScore: 0
+        });
+      }
 
       document.getElementById('start-btn').disabled = true;
       document.getElementById('loading-status').style.display = 'block';
@@ -888,32 +914,19 @@
         return;
       }
 
-      // Apply player names and dynamic theme colors
-      document.getElementById('display-p1-name').innerText = player1.name;
-      document.getElementById('display-p1-name').style.color = player1.color;
-      document.getElementById('label-p1').innerText = player1.name;
-      document.getElementById('label-p1').style.color = player1.color;
-      document.getElementById('card-p1').style.borderTop = `4px solid ${player1.color}`;
-      document.getElementById('btn-p1-add').style.background = player1.color;
-      document.getElementById('btn-p1-add').style.color = "#0d0e12";
-
-      document.getElementById('display-p2-name').innerText = player2.name;
-      document.getElementById('display-p2-name').style.color = player2.color;
-      document.getElementById('label-p2').innerText = player2.name;
-      document.getElementById('label-p2').style.color = player2.color;
-      document.getElementById('card-p2').style.borderTop = `4px solid ${player2.color}`;
-      document.getElementById('btn-p2-add').style.background = player2.color;
-      document.getElementById('btn-p2-add').style.color = "#0d0e12";
-
+      // Initialize card scores matrix
       currentIndex = 0;
-      scoreP1 = 0;
-      scoreP2 = 0;
+      cardScores = Array(currentDeck.length).fill(null).map((_, cardIdx) => {
+        const pScores = {};
+        players.forEach(p => pScores[p.id] = 0);
+        return {
+          category: currentDeck[cardIdx].category,
+          scores: pScores
+        };
+      });
 
-      cardScores = Array(currentDeck.length).fill(null).map((_, i) => ({
-        p1: 0,
-        p2: 0,
-        category: currentDeck[i].category
-      }));
+      // Build UI elements for scoreboard and controls
+      buildDynamicBoardAndControls();
 
       document.getElementById('loading-status').style.display = 'none';
       document.getElementById('start-btn').disabled = false;
@@ -921,6 +934,39 @@
       document.getElementById('game-interface').style.display = 'flex';
 
       updateCardUI();
+    }
+
+    function buildDynamicBoardAndControls() {
+      // 1. Scoreboard
+      const sbContainer = document.getElementById('scoreboard-container');
+      sbContainer.innerHTML = '';
+      players.forEach(p => {
+        const card = document.createElement('div');
+        card.className = 'player-card';
+        card.style.borderTop = `4px solid ${p.color}`;
+        card.innerHTML = `
+          <div class="player-name" style="color:${p.color};">${p.name}</div>
+          <div class="secret-score">??? PTS</div>
+        `;
+        sbContainer.appendChild(card);
+      });
+
+      // 2. Point Controls
+      const controlsContainer = document.getElementById('scoring-controls-container');
+      controlsContainer.innerHTML = '';
+      players.forEach(p => {
+        const group = document.createElement('div');
+        group.className = 'scoring-group';
+        group.innerHTML = `
+          <div class="scoring-label" style="color:${p.color};">${p.name}</div>
+          <div class="btn-row">
+            <button class="score-btn btn-sub" onclick="addPoint(${p.id}, -1, event)">-1</button>
+            <button class="score-btn" style="background:${p.color}; color:#0d0e12;" onclick="addPoint(${p.id}, 1, event)">+1</button>
+          </div>
+          <div class="card-history" id="status-p${p.id}">Card points: 0</div>
+        `;
+        controlsContainer.appendChild(group);
+      });
     }
 
     function updateCardUI() {
@@ -954,8 +1000,13 @@
 
       document.getElementById('flashcard').classList.remove('flipped');
 
-      document.getElementById('status-p1').innerText = `Card points: ${cardScores[currentIndex].p1}`;
-      document.getElementById('status-p2').innerText = `Card points: ${cardScores[currentIndex].p2}`;
+      // Update current card status per player
+      players.forEach(p => {
+        const statusElem = document.getElementById(`status-p${p.id}`);
+        if (statusElem) {
+          statusElem.innerText = `Card points: ${cardScores[currentIndex].scores[p.id]}`;
+        }
+      });
 
       document.getElementById('btn-prev').disabled = currentIndex === 0;
       document.getElementById('btn-next').disabled = currentIndex === currentDeck.length - 1;
@@ -965,17 +1016,13 @@
       document.getElementById('flashcard').classList.toggle('flipped');
     }
 
-    function addPoint(player, amount, event) {
+    function addPoint(playerId, amount, event) {
       if (event) event.stopPropagation();
 
-      if (player === 'p1') {
-        cardScores[currentIndex].p1 += amount;
-        scoreP1 += amount;
-        document.getElementById('status-p1').innerText = `Card points: ${cardScores[currentIndex].p1}`;
-      } else {
-        cardScores[currentIndex].p2 += amount;
-        scoreP2 += amount;
-        document.getElementById('status-p2').innerText = `Card points: ${cardScores[currentIndex].p2}`;
+      cardScores[currentIndex].scores[playerId] += amount;
+      const statusElem = document.getElementById(`status-p${playerId}`);
+      if (statusElem) {
+        statusElem.innerText = `Card points: ${cardScores[currentIndex].scores[playerId]}`;
       }
     }
 
@@ -998,40 +1045,83 @@
       const winnerText = document.getElementById('winner-announcement');
       const analysisText = document.getElementById('analysis-text');
 
-      if (scoreP1 > scoreP2) {
-        winnerText.innerHTML = `<span style="color:${player1.color};">${player1.name.toUpperCase()} WINS THE GAME!</span><br><small style="font-size:1rem; color:#fff;">${scoreP1} pts vs ${scoreP2} pts</small>`;
-      } else if (scoreP2 > scoreP1) {
-        winnerText.innerHTML = `<span style="color:${player2.color};">${player2.name.toUpperCase()} WINS THE GAME!</span><br><small style="font-size:1rem; color:#fff;">${scoreP2} pts vs ${scoreP1} pts</small>`;
-      } else {
-        winnerText.innerHTML = `<span style="color:#ffffff;">TIE GAME!</span><br><small style="font-size:1rem; color:#fff;">Both scored ${scoreP1} pts</small>`;
-      }
-
-      const stats = {};
-      cardScores.forEach(item => {
-        if (!stats[item.category]) {
-          stats[item.category] = { p1: 0, p2: 0 };
-        }
-        stats[item.category].p1 += item.p1;
-        stats[item.category].p2 += item.p2;
+      // Calculate totals
+      players.forEach(p => {
+        p.totalScore = cardScores.reduce((acc, card) => acc + (card.scores[p.id] || 0), 0);
       });
 
-      let categoryAnalysisHTML = "";
-      for (const [cat, scores] of Object.entries(stats)) {
-        let domain = "Tie";
-        if (scores.p1 > scores.p2) domain = `<span style="color:${player1.color}">${player1.name}</span>`;
-        else if (scores.p2 > scores.p1) domain = `<span style="color:${player2.color}">${player2.name}</span>`;
+      // Sort players by score
+      const ranked = [...players].sort((a, b) => b.totalScore - a.totalScore);
+      const topScore = ranked[0].totalScore;
+      const winners = ranked.filter(p => p.totalScore === topScore);
 
-        categoryAnalysisHTML += `
-          <div style="margin-bottom: 8px; font-size: 0.9rem; display:flex; justify-content:space-between;">
+      if (winners.length === 1) {
+        winnerText.innerHTML = `
+          <span style="color:${winners[0].color};">${winners[0].name.toUpperCase()} WINS THE GAME!</span><br>
+          <small style="font-size:0.95rem; color:#fff;">Score: ${winners[0].totalScore} pts</small>
+        `;
+      } else {
+        const winnerNames = winners.map(w => `<span style="color:${w.color};">${w.name}</span>`).join(' & ');
+        winnerText.innerHTML = `
+          <span>TIE GAME!</span><br>
+          <small style="font-size:0.95rem; color:#fff;">${winnerNames} with ${topScore} pts</small>
+        `;
+      }
+
+      // Detailed Ranking Breakdown
+      let rankingHTML = '<div style="display:flex; flex-direction:column; gap:6px; margin-bottom:15px;">';
+      ranked.forEach((p, idx) => {
+        rankingHTML += `
+          <div style="display:flex; justify-content:space-between; font-size:0.9rem; padding:4px 0; border-bottom:1px solid #252938;">
+            <span><strong>#${idx + 1}</strong> <span style="color:${p.color};">${p.name}</span></span>
+            <strong>${p.totalScore} pts</strong>
+          </div>
+        `;
+      });
+      rankingHTML += '</div>';
+
+      // Category breakdown
+      const catStats = {};
+      cardScores.forEach(card => {
+        if (!catStats[card.category]) catStats[card.category] = {};
+        players.forEach(p => {
+          if (!catStats[card.category][p.id]) catStats[card.category][p.id] = 0;
+          catStats[card.category][p.id] += card.scores[p.id];
+        });
+      });
+
+      let categoryHTML = "";
+      for (const [cat, pScores] of Object.entries(catStats)) {
+        let maxCatScore = -999;
+        let catWinners = [];
+        players.forEach(p => {
+          const score = pScores[p.id] || 0;
+          if (score > maxCatScore) {
+            maxCatScore = score;
+            catWinners = [p];
+          } else if (score === maxCatScore && score > 0) {
+            catWinners.push(p);
+          }
+        });
+
+        let domainStr = "Tie";
+        if (maxCatScore > 0) {
+          domainStr = catWinners.map(w => `<span style="color:${w.color}">${w.name}</span>`).join(' & ');
+        }
+
+        categoryHTML += `
+          <div style="margin-bottom: 8px; font-size: 0.85rem; display:flex; justify-content:space-between;">
             <strong>${cat}:</strong>
-            <span>Dominated: ${domain} (${scores.p1} vs ${scores.p2})</span>
+            <span>Leader: ${domainStr}</span>
           </div>
         `;
       }
 
       analysisText.innerHTML = `
-        <p style="margin-bottom:12px;"><strong>Scores by Category:</strong></p>
-        ${categoryAnalysisHTML}
+        <p style="margin-bottom:8px;"><strong>Overall Rankings:</strong></p>
+        ${rankingHTML}
+        <p style="margin-bottom:8px;"><strong>Category Dominance:</strong></p>
+        ${categoryHTML}
       `;
 
       modal.classList.add('active');
@@ -1042,6 +1132,9 @@
       document.getElementById('game-interface').style.display = 'none';
       document.getElementById('setup-screen').style.display = 'block';
     }
+
+    // Initialize setup
+    renderPlayerInputs();
   </script>
 </body>
 </html>
