@@ -22,6 +22,15 @@
       padding: 20px 15px;
     }
 
+    /* GLOBAL BUTTON BOUNCE ANIMATION */
+    button, .color-opt, .category-item {
+      transition: transform 0.1s ease, opacity 0.2s ease, background 0.2s ease;
+    }
+
+    button.btn-clicked, .color-opt.btn-clicked, .category-item.btn-clicked {
+      transform: scale(0.88) !important;
+    }
+
     /* SETUP SCREEN */
     .setup-card {
       background: #161820;
@@ -95,7 +104,7 @@
       border-radius: 10px;
       padding: 14px;
       margin-bottom: 16px;
-      display: none; /* Controlled via JS */
+      display: none;
       transition: all 0.3s ease;
     }
 
@@ -122,7 +131,6 @@
       border-radius: 50%;
       cursor: pointer;
       border: 2px solid transparent;
-      transition: transform 0.15s;
     }
 
     .color-opt:hover { transform: scale(1.1); }
@@ -224,20 +232,61 @@
       text-transform: uppercase;
       letter-spacing: 1.5px;
       cursor: pointer;
-      transition: transform 0.15s, background 0.2s;
       margin-top: 5px;
     }
 
     .btn-start:hover { background: #ff85b3; }
-    .btn-start:active { transform: scale(0.98); }
 
-    .loading-status {
+    /* ANIMATED LOADING STATUS BAR */
+    .loading-status-box {
       display: none;
+      margin-top: 15px;
+      background: #0d0e12;
+      border: 1px solid #252938;
+      border-radius: 10px;
+      padding: 14px;
       text-align: center;
-      margin-top: 12px;
+    }
+
+    .loading-status-text {
       font-size: 0.85rem;
       color: #70d6ff;
-      font-weight: 600;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .progress-bar-container {
+      width: 100%;
+      height: 8px;
+      background: #1a1d28;
+      border-radius: 10px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .progress-bar-fill {
+      width: 0%;
+      height: 100%;
+      background: linear-gradient(90deg, #ff70a6, #70d6ff);
+      border-radius: 10px;
+      transition: width 0.4s ease;
+    }
+
+    .progress-bar-pulse {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+      animation: pulse-anim 1.5s infinite;
+    }
+
+    @keyframes pulse-anim {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(100%); }
     }
 
     .error-box {
@@ -250,6 +299,7 @@
       font-size: 0.85rem;
       margin-top: 15px;
       text-align: center;
+      line-height: 1.4;
     }
 
     /* GAME INTERFACE */
@@ -276,7 +326,6 @@
       margin-bottom: 15px;
     }
 
-    /* SCOREBOARD */
     .scoreboard {
       display: flex;
       flex-wrap: wrap;
@@ -314,7 +363,6 @@
       letter-spacing: 1px;
     }
 
-    /* FLASHCARD CONTAINER */
     .deck-container {
       width: 100%;
       display: flex;
@@ -473,7 +521,6 @@
       flex-shrink: 0;
     }
 
-    /* SCORING CONTROLS */
     .card-actions {
       width: 100%;
       background: #161820;
@@ -521,11 +568,14 @@
       font-weight: 700;
       font-size: 1rem;
       cursor: pointer;
-      transition: all 0.15s ease;
       color: #ffffff;
     }
 
-    .score-btn:active { transform: scale(0.95); }
+    .score-btn:disabled {
+      opacity: 0.25;
+      cursor: not-allowed;
+    }
+
     .btn-sub { background: #252938; color: #a0a5b5; }
 
     .card-history {
@@ -535,16 +585,18 @@
       margin-top: 2px;
     }
 
-    /* NAVIGATION */
+    /* NAVIGATION BAR WITH RETURN MENU BUTTON */
     .nav-controls {
       display: flex;
-      gap: 12px;
+      gap: 8px;
       width: 100%;
+      flex-wrap: wrap;
     }
 
     .nav-btn {
       flex: 1;
-      padding: 14px;
+      min-width: 90px;
+      padding: 12px 8px;
       background: #202433;
       border: 1px solid #33394f;
       border-radius: 10px;
@@ -552,18 +604,19 @@
       font-weight: 600;
       cursor: pointer;
       text-transform: uppercase;
-      letter-spacing: 1px;
-      font-size: 0.85rem;
-      transition: background 0.2s ease;
+      letter-spacing: 0.8px;
+      font-size: 0.8rem;
     }
 
     .nav-btn:hover { background: #2b3044; }
     .nav-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
+    .menu-btn { background: #3b2a1a; border-color: #ff9f1c; color: #ff9f1c; }
+    .menu-btn:hover { background: #4d3822; }
+
     .finish-btn { background: #2e7d32; border-color: #388e3c; }
     .finish-btn:hover { background: #388e3c; }
 
-    /* MODAL */
     .modal-overlay {
       position: fixed;
       top: 0;
@@ -650,12 +703,12 @@
 
   <!-- SETUP & CONFIGURATION SCREEN -->
   <div class="setup-card" id="setup-screen">
-    <div class="setup-title">TRIVIA LIVE FLASHCARDS</div>
-    <div class="setup-subtitle">Multi-Player & Dual Engine Trivia System</div>
+    <div class="setup-title" id="lbl-setup-title">TRIVIA LIVE FLASHCARDS</div>
+    <div class="setup-subtitle" id="lbl-setup-subtitle">Sistema de Trivia Multijugador y Doble Motor</div>
 
     <!-- SERVER / LANGUAGE SELECTOR -->
     <div class="form-group">
-      <label>Language & Engine Server</label>
+      <label id="lbl-engine">Servidor e Idioma</label>
       <select class="select-input" id="engine-selector" onchange="handleEngineChange()">
         <option value="gemini_es" selected>Español [Gemini]</option>
         <option value="trivia_en">Inglés [The Trivia API]</option>
@@ -665,81 +718,90 @@
     <!-- CONDITIONAL GEMINI API KEY FIELD -->
     <div class="api-key-box active" id="api-key-container">
       <div class="form-group" style="margin-bottom: 0;">
-        <label style="color:#70d6ff;">Gemini API Key (Para Español)</label>
+        <label style="color:#70d6ff;" id="lbl-api-key">Gemini API Key (Para Español)</label>
         <input type="password" class="input-text" id="gemini-key-input" placeholder="AIzaSy..." onchange="saveApiKeyLocally()">
-        <div class="api-key-hint">
-          Se guarda automáticamente en tu navegador. Puedes obtener tu clave gratis en <a href="https://aistudio.google.com" target="_blank" style="color:#70d6ff;">aistudio.google.com</a>.
+        <div class="api-key-hint" id="lbl-api-hint">
+          Se guarda automáticamente en tu navegador. Consigue tu clave gratis en <a href="https://aistudio.google.com" target="_blank" style="color:#70d6ff;">aistudio.google.com</a>.
         </div>
       </div>
     </div>
 
     <!-- NUMBER OF PLAYERS SELECTOR -->
     <div class="form-group">
-      <label>Number of Players</label>
+      <label id="lbl-player-count">Cantidad de Jugadores</label>
       <select class="select-input" id="player-count-select" onchange="renderPlayerInputs()">
-        <option value="1">1 Player</option>
-        <option value="2" selected>2 Players</option>
-        <option value="3">3 Players</option>
-        <option value="4">4 Players</option>
-        <option value="5">5 Players</option>
+        <option value="1" id="opt-p1">1 Jugador</option>
+        <option value="2" id="opt-p2" selected>2 Jugadores</option>
+        <option value="3" id="opt-p3">3 Jugadores</option>
+        <option value="4" id="opt-p4">4 Jugadores</option>
+        <option value="5" id="opt-p5">5 Jugadores</option>
       </select>
     </div>
 
     <!-- DYNAMIC PLAYERS CONTAINER -->
-    <div class="config-section-title">Players Setup</div>
+    <div class="config-section-title" id="lbl-players-section">Configuración de Jugadores</div>
     <div class="players-setup-container" id="players-inputs-container">
       <!-- Generated via JS -->
     </div>
 
     <!-- API CONFIGURATIONS -->
-    <div class="config-section-title">Game Parameters</div>
+    <div class="config-section-title" id="lbl-game-section">Parámetros de Juego</div>
 
     <div class="grid-2">
       <div class="form-group">
-        <label>Difficulty</label>
+        <label id="lbl-difficulty">Dificultad</label>
         <select class="select-input" id="api-difficulty">
-          <option value="all" selected>All / Mixed</option>
-          <option value="easy">Easy / Fácil</option>
-          <option value="medium">Medium / Medio</option>
-          <option value="hard">Hard / Difícil</option>
+          <option value="all" id="opt-diff-all" selected>Todas / Mixto</option>
+          <option value="easy" id="opt-diff-easy">Fácil</option>
+          <option value="medium" id="opt-diff-medium">Medio</option>
+          <option value="hard" id="opt-diff-hard">Difícil</option>
         </select>
       </div>
 
       <div class="form-group">
-        <label>Cards Count</label>
+        <label id="lbl-cards-count">Cantidad de Tarjetas</label>
         <select class="select-input" id="api-limit">
-          <option value="10">10 Cards</option>
-          <option value="15">15 Cards</option>
-          <option value="20">20 Cards</option>
-          <option value="25" selected>25 Cards</option>
+          <option value="10">10 Tarjetas</option>
+          <option value="15">15 Tarjetas</option>
+          <option value="20">20 Tarjetas</option>
+          <option value="25" selected>25 Tarjetas</option>
         </select>
       </div>
     </div>
 
     <!-- MULTI-CATEGORY CHECKBOXES -->
-    <div class="config-section-title">Select Categories</div>
+    <div class="config-section-title" id="lbl-categories-section">Seleccionar Categorías</div>
     <div class="categories-box">
       <div class="category-actions">
-        <span style="font-size:0.75rem; color:#a0a5b5; font-weight:600;">Choose one, multiple, or all</span>
-        <button type="button" class="toggle-all-btn" onclick="toggleAllCategories()">Toggle All</button>
+        <span style="font-size:0.75rem; color:#a0a5b5; font-weight:600;" id="lbl-cat-hint">Elige una, varias o todas</span>
+        <button type="button" class="toggle-all-btn" id="btn-toggle-all" onclick="toggleAllCategories()">Marcar/Desmarcar Todas</button>
       </div>
       <div class="categories-grid" id="categories-container">
-        <label class="category-item"><input type="checkbox" value="music" checked> Music / Música</label>
-        <label class="category-item"><input type="checkbox" value="film_and_tv" checked> Film & TV / Cine y Series</label>
-        <label class="category-item"><input type="checkbox" value="geography" checked> Geography / Geografía</label>
-        <label class="category-item"><input type="checkbox" value="history" checked> History / Historia</label>
-        <label class="category-item"><input type="checkbox" value="science" checked> Science / Ciencia</label>
-        <label class="category-item"><input type="checkbox" value="general_knowledge" checked> General / Cultura General</label>
-        <label class="category-item"><input type="checkbox" value="food_and_drink" checked> Food & Drink / Gastronomía</label>
-        <label class="category-item"><input type="checkbox" value="sport_and_leisure" checked> Sports / Deportes y Ocio</label>
-        <label class="category-item"><input type="checkbox" value="society_and_culture" checked> Pop Culture / Cultura Pop</label>
-        <label class="category-item"><input type="checkbox" value="arts_and_literature" checked> Arts & Lit / Arte y Lit.</label>
+        <label class="category-item"><input type="checkbox" value="música" checked> <span class="cat-label" data-cat="music">Música</span></label>
+        <label class="category-item"><input type="checkbox" value="cine y series" checked> <span class="cat-label" data-cat="film">Cine y Series</span></label>
+        <label class="category-item"><input type="checkbox" value="geografía" checked> <span class="cat-label" data-cat="geography">Geografía</span></label>
+        <label class="category-item"><input type="checkbox" value="historia" checked> <span class="cat-label" data-cat="history">Historia</span></label>
+        <label class="category-item"><input type="checkbox" value="ciencia y tecnología" checked> <span class="cat-label" data-cat="science">Ciencia</span></label>
+        <label class="category-item"><input type="checkbox" value="cultura general" checked> <span class="cat-label" data-cat="general">Cultura General</span></label>
+        <label class="category-item"><input type="checkbox" value="gastronomía" checked> <span class="cat-label" data-cat="food">Gastronomía</span></label>
+        <label class="category-item"><input type="checkbox" value="deportes" checked> <span class="cat-label" data-cat="sports">Deportes</span></label>
+        <label class="category-item"><input type="checkbox" value="cultura pop y memes" checked> <span class="cat-label" data-cat="pop">Cultura Pop</span></label>
+        <label class="category-item"><input type="checkbox" value="arte y literatura" checked> <span class="cat-label" data-cat="art">Arte y Lit.</span></label>
       </div>
     </div>
 
-    <button class="btn-start" id="start-btn" onclick="startGame()">Start New Game!</button>
-    <div class="loading-status" id="loading-status">Generating live questions...</div>
-    <div class="error-box" id="error-box">Failed to generate trivia. Please check your API key or category selection.</div>
+    <button class="btn-start" id="start-btn" onclick="startGame()">¡Iniciar Nuevo Juego!</button>
+    
+    <!-- ANIMATED MULTI-STAGE LOADING STATUS BAR -->
+    <div class="loading-status-box" id="loading-status-box">
+      <div class="loading-status-text" id="loading-status-text">Conectando con el servidor...</div>
+      <div class="progress-bar-container">
+        <div class="progress-bar-fill" id="progress-bar-fill"></div>
+        <div class="progress-bar-pulse"></div>
+      </div>
+    </div>
+
+    <div class="error-box" id="error-box"></div>
   </div>
 
 
@@ -753,32 +815,32 @@
     </header>
 
     <div class="deck-container">
-      <div class="card-tracker" id="card-tracker">CARD 1 OF 25</div>
+      <div class="card-tracker" id="card-tracker">TARJETA 1 DE 25</div>
 
       <div class="flashcard-wrapper" onclick="flipCard()">
         <div class="flashcard" id="flashcard">
           <!-- CARD FRONT -->
           <div class="card-face card-front">
-            <span class="category-badge" id="card-category">CATEGORY</span>
+            <span class="category-badge" id="card-category">CATEGORÍA</span>
             
             <div class="card-body">
-              <div class="question-text" id="card-question-text">Loading question...</div>
+              <div class="question-text" id="card-question-text">Cargando pregunta...</div>
               <div class="options-grid" id="card-options"></div>
             </div>
 
-            <div class="card-footer" id="card-footer-front">Tap card to flip & reveal answer</div>
+            <div class="card-footer" id="card-footer-front">Toca la tarjeta para voltear y ver la respuesta</div>
           </div>
 
           <!-- CARD BACK -->
           <div class="card-face card-back">
-            <span class="category-badge" id="card-back-badge">ANSWER REVEAL</span>
+            <span class="category-badge" id="card-back-badge">RESPUESTA CORRECTA</span>
             
             <div class="card-body">
-              <div class="answer-title" id="card-answer-label">Correct Answer</div>
-              <div class="correct-answer-box" id="card-answer">Loading answer...</div>
+              <div class="answer-title" id="card-answer-label">Respuesta Correcta</div>
+              <div class="correct-answer-box" id="card-answer">Cargando respuesta...</div>
             </div>
 
-            <div class="card-footer" id="card-footer-back">Tap card to flip back</div>
+            <div class="card-footer" id="card-footer-back">Toca para volver al frente</div>
           </div>
         </div>
       </div>
@@ -788,11 +850,12 @@
         <!-- Generated via JS -->
       </div>
 
-      <!-- NAVIGATION -->
+      <!-- NAVIGATION WITH RETURN MENU BUTTON -->
       <div class="nav-controls">
-        <button class="nav-btn" id="btn-prev" onclick="prevCard()" disabled>Previous</button>
-        <button class="nav-btn" id="btn-next" onclick="nextCard()">Next</button>
-        <button class="nav-btn finish-btn" onclick="showResults()">See Winner</button>
+        <button class="nav-btn" id="btn-prev" onclick="prevCard()" disabled>Anterior</button>
+        <button class="nav-btn menu-btn" id="btn-menu" onclick="confirmReturnToMenu()">Menú Principal</button>
+        <button class="nav-btn" id="btn-next" onclick="nextCard()">Siguiente</button>
+        <button class="nav-btn finish-btn" id="btn-finish" onclick="showResults()">Ver Ganador</button>
       </div>
     </div>
   </div>
@@ -801,39 +864,122 @@
   <!-- RESULTS MODAL -->
   <div class="modal-overlay" id="results-modal">
     <div class="modal-content">
-      <div class="modal-title" id="modal-title-text">FINAL RESULTS</div>
+      <div class="modal-title" id="modal-title-text">RESULTADOS FINALES</div>
       
       <div class="winner-announcement" id="winner-announcement">
-        CALCULATING WINNER...
+        CALCULANDO GANADOR...
       </div>
 
       <div class="analysis-section">
-        <h3 id="analysis-section-title">KNOWLEDGE ANALYSIS</h3>
-        <div id="analysis-text">Loading breakdown...</div>
+        <h3 id="analysis-section-title">ANÁLISIS DE CONOCIMIENTO</h3>
+        <div id="analysis-text">Cargando desglose...</div>
       </div>
 
-      <button class="restart-btn" onclick="returnToSetup()">New Game / Setup</button>
+      <button class="restart-btn" id="btn-modal-restart" onclick="returnToSetup()">Nuevo Juego / Configuración</button>
     </div>
   </div>
 
 
   <script>
     const DEFAULT_COLORS = ["#ff70a6", "#70d6ff", "#a06cd5", "#ff9f1c", "#2ec4b6"];
-    const DEFAULT_NAMES = ["Ame", "Pedro", "Player 3", "Player 4", "Player 5"];
+    const DEFAULT_NAMES_ES = ["Jugador 1", "Jugador 2", "Jugador 3", "Jugador 4", "Jugador 5"];
+    const DEFAULT_NAMES_EN = ["Player 1", "Player 2", "Player 3", "Player 4", "Player 5"];
 
     let players = [];
     let currentDeck = [];
     let currentIndex = 0;
     let cardScores = [];
+    let progressTimer = null;
+    let audioCtx = null;
 
-    // ON INIT: LOAD SAVED GEMINI API KEY & RENDER INPUTS
+    // GLOBAL AUDIO INITIALIZER
+    function initAudio() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+    }
+
+    function playClickSound(type = 'add') {
+      try {
+        initAudio();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+
+        osc.type = 'sine';
+        const startFreq = type === 'add' ? 600 : (type === 'sub' ? 350 : 500);
+        const endFreq = type === 'add' ? 900 : (type === 'sub' ? 200 : 700);
+
+        osc.frequency.setValueAtTime(startFreq, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(endFreq, audioCtx.currentTime + 0.06);
+
+        gain.gain.setValueAtTime(0.12, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.06);
+
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.06);
+      } catch (e) {
+        console.warn("Audio Context error:", e);
+      }
+    }
+
+    function playWindSound() {
+      try {
+        initAudio();
+        const bufferSize = audioCtx.sampleRate * 0.3;
+        const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+        const output = buffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) {
+          output[i] = Math.random() * 2 - 1;
+        }
+
+        const whiteNoise = audioCtx.createBufferSource();
+        whiteNoise.buffer = buffer;
+
+        const filter = audioCtx.createBiquadFilter();
+        filter.type = 'bandpass';
+        filter.Q.setValueAtTime(3.0, audioCtx.currentTime);
+
+        filter.frequency.setValueAtTime(200, audioCtx.currentTime);
+        filter.frequency.exponentialRampToValueAtTime(1200, audioCtx.currentTime + 0.15);
+        filter.frequency.exponentialRampToValueAtTime(300, audioCtx.currentTime + 0.3);
+
+        const gain = audioCtx.createGain();
+        gain.gain.setValueAtTime(0.01, audioCtx.currentTime);
+        gain.gain.linearRampToValueAtTime(0.25, audioCtx.currentTime + 0.12);
+        gain.gain.linearRampToValueAtTime(0.001, audioCtx.currentTime + 0.3);
+
+        whiteNoise.connect(filter);
+        filter.connect(gain);
+        gain.connect(audioCtx.destination);
+
+        whiteNoise.start();
+        whiteNoise.stop(audioCtx.currentTime + 0.3);
+      } catch (e) {
+        console.warn("Audio Context error:", e);
+      }
+    }
+
+    document.addEventListener('click', (e) => {
+      const btn = e.target.closest('button, .color-opt, .category-item');
+      if (btn) {
+        playClickSound('btn');
+        btn.classList.add('btn-clicked');
+        setTimeout(() => btn.classList.remove('btn-clicked'), 120);
+      }
+    });
+
     window.addEventListener('DOMContentLoaded', () => {
       const savedKey = localStorage.getItem('gemini_api_key') || '';
       if (savedKey) {
         document.getElementById('gemini-key-input').value = savedKey;
       }
       handleEngineChange();
-      renderPlayerInputs();
     });
 
     function saveApiKeyLocally() {
@@ -843,32 +989,114 @@
       }
     }
 
-    // TOGGLE CONDITIONAL GEMINI API KEY INPUT
+    // UPDATE ALL SETUP AND UI TEXT BASED ON SELECTED LANGUAGE
     function handleEngineChange() {
       const engine = document.getElementById('engine-selector').value;
+      const isSpanish = engine === 'gemini_es';
       const keyBox = document.getElementById('api-key-container');
 
-      if (engine === 'gemini_es') {
+      if (isSpanish) {
         keyBox.classList.add('active');
+        document.getElementById('lbl-setup-subtitle').innerText = "Sistema de Trivia Multijugador y Doble Motor";
+        document.getElementById('lbl-engine').innerText = "Servidor e Idioma";
+        document.getElementById('lbl-api-key').innerText = "Gemini API Key (Para Español)";
+        document.getElementById('lbl-api-hint').innerHTML = 'Se guarda automáticamente en tu navegador. Consigue tu clave gratis en <a href="https://aistudio.google.com" target="_blank" style="color:#70d6ff;">aistudio.google.com</a>.';
+        document.getElementById('lbl-player-count').innerText = "Cantidad de Jugadores";
+        
+        document.getElementById('opt-p1').innerText = "1 Jugador";
+        document.getElementById('opt-p2').innerText = "2 Jugadores";
+        document.getElementById('opt-p3').innerText = "3 Jugadores";
+        document.getElementById('opt-p4').innerText = "4 Jugadores";
+        document.getElementById('opt-p5').innerText = "5 Jugadores";
+
+        document.getElementById('lbl-players-section').innerText = "Configuración de Jugadores";
+        document.getElementById('lbl-game-section').innerText = "Parámetros de Juego";
+        document.getElementById('lbl-difficulty').innerText = "Dificultad";
+
+        document.getElementById('opt-diff-all').innerText = "Todas / Mixto";
+        document.getElementById('opt-diff-easy').innerText = "Fácil";
+        document.getElementById('opt-diff-medium').innerText = "Medio";
+        document.getElementById('opt-diff-hard').innerText = "Difícil";
+
+        document.getElementById('lbl-cards-count').innerText = "Cantidad de Tarjetas";
+        document.getElementById('lbl-categories-section').innerText = "Seleccionar Categorías";
+        document.getElementById('lbl-cat-hint').innerText = "Elige una, varias o todas";
+        document.getElementById('btn-toggle-all').innerText = "Marcar/Desmarcar Todas";
+        document.getElementById('start-btn').innerText = "¡Iniciar Nuevo Juego!";
+
+        // Category labels
+        updateCatLabel('music', 'Música');
+        updateCatLabel('film', 'Cine y Series');
+        updateCatLabel('geography', 'Geografía');
+        updateCatLabel('history', 'Historia');
+        updateCatLabel('science', 'Ciencia');
+        updateCatLabel('general', 'Cultura General');
+        updateCatLabel('food', 'Gastronomía');
+        updateCatLabel('sports', 'Deportes');
+        updateCatLabel('pop', 'Cultura Pop');
+        updateCatLabel('art', 'Arte y Lit.');
       } else {
         keyBox.classList.remove('active');
+        document.getElementById('lbl-setup-subtitle').innerText = "Multi-Player & Dual Engine Trivia System";
+        document.getElementById('lbl-engine').innerText = "Language & Engine Server";
+        document.getElementById('lbl-player-count').innerText = "Number of Players";
+
+        document.getElementById('opt-p1').innerText = "1 Player";
+        document.getElementById('opt-p2').innerText = "2 Players";
+        document.getElementById('opt-p3').innerText = "3 Players";
+        document.getElementById('opt-p4').innerText = "4 Players";
+        document.getElementById('opt-p5').innerText = "5 Players";
+
+        document.getElementById('lbl-players-section').innerText = "Players Setup";
+        document.getElementById('lbl-game-section').innerText = "Game Parameters";
+        document.getElementById('lbl-difficulty').innerText = "Difficulty";
+
+        document.getElementById('opt-diff-all').innerText = "All / Mixed";
+        document.getElementById('opt-diff-easy').innerText = "Easy";
+        document.getElementById('opt-diff-medium').innerText = "Medium";
+        document.getElementById('opt-diff-hard').innerText = "Hard";
+
+        document.getElementById('lbl-cards-count').innerText = "Cards Count";
+        document.getElementById('lbl-categories-section').innerText = "Select Categories";
+        document.getElementById('lbl-cat-hint').innerText = "Choose one, multiple, or all";
+        document.getElementById('btn-toggle-all').innerText = "Toggle All";
+        document.getElementById('start-btn').innerText = "Start New Game!";
+
+        updateCatLabel('music', 'Music');
+        updateCatLabel('film', 'Film & TV');
+        updateCatLabel('geography', 'Geography');
+        updateCatLabel('history', 'History');
+        updateCatLabel('science', 'Science');
+        updateCatLabel('general', 'General Knowledge');
+        updateCatLabel('food', 'Food & Drink');
+        updateCatLabel('sports', 'Sports');
+        updateCatLabel('pop', 'Pop Culture');
+        updateCatLabel('art', 'Arts & Lit');
       }
+      renderPlayerInputs();
+    }
+
+    function updateCatLabel(key, text) {
+      const elem = document.querySelector(`.cat-label[data-cat="${key}"]`);
+      if (elem) elem.innerText = text;
     }
 
     function renderPlayerInputs() {
       const count = parseInt(document.getElementById('player-count-select').value, 10);
+      const isSpanish = document.getElementById('engine-selector').value === 'gemini_es';
+      const defaultNames = isSpanish ? DEFAULT_NAMES_ES : DEFAULT_NAMES_EN;
       const container = document.getElementById('players-inputs-container');
       container.innerHTML = '';
 
       for (let i = 0; i < count; i++) {
-        const pName = DEFAULT_NAMES[i];
+        const pName = defaultNames[i];
         const pColor = DEFAULT_COLORS[i];
 
         const pBox = document.createElement('div');
         pBox.className = 'player-setup-box';
         pBox.innerHTML = `
           <div style="display:flex; justify-content:space-between; align-items:center;">
-            <label style="font-size:0.75rem; font-weight:700; color:#a0a5b5;">PLAYER ${i + 1}</label>
+            <label style="font-size:0.75rem; font-weight:700; color:#a0a5b5;">${isSpanish ? 'JUGADOR' : 'PLAYER'} ${i + 1}</label>
           </div>
           <div style="display:flex; gap:10px; align-items:center;">
             <input type="text" class="input-text p-name-input" data-index="${i}" value="${pName}">
@@ -903,11 +1131,66 @@
       checkboxes.forEach(cb => cb.checked = !allChecked);
     }
 
-    // FETCH FROM ENGLISH TRIVIA API v2
+    function startLoadingAnimation(isSpanish) {
+      const box = document.getElementById('loading-status-box');
+      const textElem = document.getElementById('loading-status-text');
+      const fillElem = document.getElementById('progress-bar-fill');
+
+      box.style.display = 'block';
+      fillElem.style.width = '10%';
+
+      const stages = isSpanish ? [
+        { progress: 25, text: "Conectando con Google Gemini..." },
+        { progress: 55, text: "Redactando preguntas y opciones en español..." },
+        { progress: 85, text: "Mezclando alternativas y preparando tarjetas..." }
+      ] : [
+        { progress: 30, text: "Connecting to The Trivia API..." },
+        { progress: 65, text: "Fetching questions and options..." },
+        { progress: 90, text: "Preparing flashcard deck..." }
+      ];
+
+      let currentStage = 0;
+      textElem.innerText = stages[0].text;
+      fillElem.style.width = stages[0].progress + '%';
+
+      if (progressTimer) clearInterval(progressTimer);
+      progressTimer = setInterval(() => {
+        currentStage++;
+        if (currentStage < stages.length) {
+          textElem.innerText = stages[currentStage].text;
+          fillElem.style.width = stages[currentStage].progress + '%';
+        }
+      }, 1400);
+    }
+
+    function stopLoadingAnimation() {
+      if (progressTimer) clearInterval(progressTimer);
+      const fillElem = document.getElementById('progress-bar-fill');
+      fillElem.style.width = '100%';
+      setTimeout(() => {
+        document.getElementById('loading-status-box').style.display = 'none';
+        fillElem.style.width = '0%';
+      }, 300);
+    }
+
     async function fetchEnglishTriviaApi(limit, difficulty, checkedCats) {
+      const englishCategoryMap = {
+        "música": "music",
+        "cine y series": "film_and_tv",
+        "geografía": "geography",
+        "historia": "history",
+        "ciencia y tecnología": "science",
+        "cultura general": "general_knowledge",
+        "gastronomía": "food_and_drink",
+        "deportes": "sport_and_leisure",
+        "cultura pop y memes": "society_and_culture",
+        "arte y literatura": "arts_and_literature"
+      };
+
+      const mappedCats = checkedCats.map(c => englishCategoryMap[c] || "general_knowledge");
       let url = `https://the-trivia-api.com/v2/questions?limit=${limit}`;
       if (difficulty !== 'all') url += `&difficulties=${difficulty}`;
-      if (checkedCats.length > 0) url += `&categories=${checkedCats.join(',')}`;
+      if (mappedCats.length > 0) url += `&categories=${mappedCats.join(',')}`;
 
       const response = await fetch(url);
       if (!response.ok) throw new Error("API HTTP Error " + response.status);
@@ -927,17 +1210,21 @@
       });
     }
 
-    // FETCH FROM SPANISH GEMINI API LIVE
     async function fetchSpanishGeminiApi(apiKey, limit, difficulty, checkedCats) {
       const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
 
-      const catNames = checkedCats.map(c => c.replace(/_/g, " ")).join(", ");
+      const catNames = checkedCats.join(", ");
       const diffText = difficulty === 'all' ? 'variada (fácil, media y difícil)' : difficulty;
 
-      const promptText = `Genera un paquete de exactamente ${limit} preguntas de trivia entretenidas en ESPAÑOL NATIVO.
+      const promptText = `Genera un paquete JSON con exactamente ${limit} preguntas de trivia en ESPAÑOL NATIVO.
 Dificultad: ${diffText}.
-Categorías a incluir: ${catNames}.
-Asegúrate de incluir cultura pop, cine, música, datos curiosos globales y cultura general. Cada pregunta debe tener exactamente 4 opciones de respuesta y 1 respuesta correcta.`;
+Categorías elegidas: ${catNames}.
+Incluye cultura pop, cine, música, deportes, geografía y datos curiosos.
+Cada pregunta debe ser un objeto JSON con los siguientes campos:
+- "category": categoría de la pregunta
+- "question": texto de la pregunta
+- "answer": respuesta correcta
+- "options": un arreglo de 4 cadenas con las alternativas A, B, C y D`;
 
       const requestBody = {
         contents: [{ parts: [{ text: promptText }] }],
@@ -971,19 +1258,20 @@ Asegúrate de incluir cultura pop, cine, música, datos curiosos globales y cult
 
       if (!response.ok) {
         const errData = await response.json().catch(() => ({}));
-        throw new Error(errData.error?.message || "Error al conectar con Gemini API");
+        const msg = errData.error?.message || `Error HTTP ${response.status}`;
+        throw new Error(`Gemini API Error: ${msg}`);
       }
 
       const resData = await response.json();
       const rawText = resData.candidates?.[0]?.content?.parts?.[0]?.text;
-      if (!rawText) throw new Error("Respuesta vacía de Gemini");
+      if (!rawText) throw new Error("Respuesta vacía recibida de Gemini API");
 
       const parsedJSON = JSON.parse(rawText);
       return parsedJSON.map(item => ({
         category: (item.category || "GENERAL").toUpperCase(),
         question: item.question,
         answer: item.answer,
-        options: item.options && item.options.length === 4 ? item.options : shuffleArray([item.answer, "Opción 2", "Opción 3", "Opción 4"])
+        options: item.options && item.options.length === 4 ? item.options : shuffleArray([item.answer, "Opción B", "Opción C", "Opción D"])
       }));
     }
 
@@ -992,41 +1280,42 @@ Asegúrate de incluir cultura pop, cine, música, datos curiosos globales y cult
       errorBox.style.display = 'none';
 
       const engine = document.getElementById('engine-selector').value;
+      const isSpanish = engine === 'gemini_es';
       const difficulty = document.getElementById('api-difficulty').value;
       const limit = document.getElementById('api-limit').value;
       const checkedCats = Array.from(document.querySelectorAll('#categories-container input[type="checkbox"]:checked')).map(cb => cb.value);
 
       if (checkedCats.length === 0) {
-        errorBox.innerText = "Please select at least one category / Por favor selecciona al menos una categoría.";
+        errorBox.innerText = isSpanish ? "Por favor selecciona al menos una categoría." : "Please select at least one category.";
         errorBox.style.display = 'block';
         return;
       }
 
-      // Read players configuration
       const count = parseInt(document.getElementById('player-count-select').value, 10);
+      const defaultNames = isSpanish ? DEFAULT_NAMES_ES : DEFAULT_NAMES_EN;
       players = [];
       const nameInputs = document.querySelectorAll('.p-name-input');
       for (let i = 0; i < count; i++) {
-        const nameVal = nameInputs[i] ? nameInputs[i].value.trim() : `Player ${i + 1}`;
+        const nameVal = nameInputs[i] ? nameInputs[i].value.trim() : defaultNames[i];
         const selectedColorOpt = document.querySelector(`#color-picker-p${i} .color-opt.selected`);
         const colorVal = selectedColorOpt ? selectedColorOpt.getAttribute('data-color') : DEFAULT_COLORS[i];
 
         players.push({
           id: i,
-          name: nameVal || `Player ${i + 1}`,
+          name: nameVal || defaultNames[i],
           color: colorVal,
           totalScore: 0
         });
       }
 
       document.getElementById('start-btn').disabled = true;
-      document.getElementById('loading-status').style.display = 'block';
+      startLoadingAnimation(isSpanish);
 
       try {
-        if (engine === 'gemini_es') {
+        if (isSpanish) {
           const apiKey = document.getElementById('gemini-key-input').value.trim();
           if (!apiKey) {
-            throw new Error("Por favor ingresa tu clave de API de Gemini para jugar en Español.");
+            throw new Error("Ingresa tu clave de API de Gemini para jugar en Español.");
           }
           saveApiKeyLocally();
           currentDeck = await fetchSpanishGeminiApi(apiKey, limit, difficulty, checkedCats);
@@ -1034,15 +1323,14 @@ Asegúrate de incluir cultura pop, cine, música, datos curiosos globales y cult
           currentDeck = await fetchEnglishTriviaApi(limit, difficulty, checkedCats);
         }
       } catch (err) {
-        console.error("Error generating trivia:", err);
-        document.getElementById('loading-status').style.display = 'none';
+        console.error("Error al generar trivia:", err);
+        stopLoadingAnimation();
         document.getElementById('start-btn').disabled = false;
-        errorBox.innerText = err.message || "Error al conectar con el servidor.";
+        errorBox.innerText = err.message || "Error de conexión al servidor.";
         errorBox.style.display = 'block';
         return;
       }
 
-      // Initialize card scores matrix
       currentIndex = 0;
       cardScores = Array(currentDeck.length).fill(null).map((_, cardIdx) => {
         const pScores = {};
@@ -1055,7 +1343,7 @@ Asegúrate de incluir cultura pop, cine, música, datos curiosos globales y cult
 
       buildDynamicBoardAndControls();
 
-      document.getElementById('loading-status').style.display = 'none';
+      stopLoadingAnimation();
       document.getElementById('start-btn').disabled = false;
       document.getElementById('setup-screen').style.display = 'none';
       document.getElementById('game-interface').style.display = 'flex';
@@ -1064,7 +1352,6 @@ Asegúrate de incluir cultura pop, cine, música, datos curiosos globales y cult
     }
 
     function buildDynamicBoardAndControls() {
-      // 1. Scoreboard
       const sbContainer = document.getElementById('scoreboard-container');
       sbContainer.innerHTML = '';
       players.forEach(p => {
@@ -1078,7 +1365,7 @@ Asegúrate de incluir cultura pop, cine, música, datos curiosos globales y cult
         sbContainer.appendChild(card);
       });
 
-      // 2. Point Controls
+      const isSpanish = document.getElementById('engine-selector').value === 'gemini_es';
       const controlsContainer = document.getElementById('scoring-controls-container');
       controlsContainer.innerHTML = '';
       players.forEach(p => {
@@ -1087,10 +1374,10 @@ Asegúrate de incluir cultura pop, cine, música, datos curiosos globales y cult
         group.innerHTML = `
           <div class="scoring-label" style="color:${p.color};">${p.name}</div>
           <div class="btn-row">
-            <button class="score-btn btn-sub" onclick="addPoint(${p.id}, -1, event)">-1</button>
-            <button class="score-btn" style="background:${p.color}; color:#0d0e12;" onclick="addPoint(${p.id}, 1, event)">+1</button>
+            <button class="score-btn btn-sub" id="btn-sub-${p.id}" onclick="addPoint(${p.id}, -1, event)">-1</button>
+            <button class="score-btn" id="btn-add-${p.id}" style="background:${p.color}; color:#0d0e12;" onclick="addPoint(${p.id}, 1, event)">+1</button>
           </div>
-          <div class="card-history" id="status-p${p.id}">Card pts: 0</div>
+          <div class="card-history" id="status-p${p.id}">${isSpanish ? 'Pts tarjeta:' : 'Card pts:'} 0</div>
         `;
         controlsContainer.appendChild(group);
       });
@@ -1104,6 +1391,11 @@ Asegúrate de incluir cultura pop, cine, música, datos curiosos globales y cult
         ? `TARJETA ${currentIndex + 1} DE ${currentDeck.length}` 
         : `CARD ${currentIndex + 1} OF ${currentDeck.length}`;
 
+      document.getElementById('btn-menu').innerText = isSpanish ? "Menú Principal" : "Main Menu";
+      document.getElementById('btn-prev').innerText = isSpanish ? "Anterior" : "Previous";
+      document.getElementById('btn-next').innerText = isSpanish ? "Siguiente" : "Next";
+      document.getElementById('btn-finish').innerText = isSpanish ? "Ver Ganador" : "See Winner";
+
       document.getElementById('card-category').innerText = q.category;
       document.getElementById('card-question-text').innerText = q.question;
       document.getElementById('card-answer').innerText = q.answer;
@@ -1113,7 +1405,6 @@ Asegúrate de incluir cultura pop, cine, música, datos curiosos globales y cult
       document.getElementById('card-answer-label').innerText = isSpanish ? "Respuesta Correcta" : "Correct Answer";
       document.getElementById('card-footer-back').innerText = isSpanish ? "Toca para volver al frente" : "Tap card to flip back";
 
-      // Render Options A, B, C, D
       const optionsContainer = document.getElementById('card-options');
       optionsContainer.innerHTML = '';
       if (q.options && q.options.length > 0) {
@@ -1128,13 +1419,20 @@ Asegúrate de incluir cultura pop, cine, música, datos curiosos globales y cult
 
       document.getElementById('flashcard').classList.remove('flipped');
 
-      // Update current card status per player
       players.forEach(p => {
+        const score = cardScores[currentIndex].scores[p.id] || 0;
         const statusElem = document.getElementById(`status-p${p.id}`);
         if (statusElem) {
           statusElem.innerText = isSpanish 
-            ? `Pts tarjeta: ${cardScores[currentIndex].scores[p.id]}` 
-            : `Card pts: ${cardScores[currentIndex].scores[p.id]}`;
+            ? `Pts tarjeta: ${score}` 
+            : `Card pts: ${score}`;
+        }
+
+        const btnAdd = document.getElementById(`btn-add-${p.id}`);
+        const btnSub = document.getElementById(`btn-sub-${p.id}`);
+        if (btnAdd && btnSub) {
+          btnAdd.disabled = (score >= 1);
+          btnSub.disabled = (score <= -1);
         }
       });
 
@@ -1143,20 +1441,21 @@ Asegúrate de incluir cultura pop, cine, música, datos curiosos globales y cult
     }
 
     function flipCard() {
+      playWindSound();
       document.getElementById('flashcard').classList.toggle('flipped');
     }
 
     function addPoint(playerId, amount, event) {
       if (event) event.stopPropagation();
-      const isSpanish = document.getElementById('engine-selector').value === 'gemini_es';
 
-      cardScores[currentIndex].scores[playerId] += amount;
-      const statusElem = document.getElementById(`status-p${playerId}`);
-      if (statusElem) {
-        statusElem.innerText = isSpanish 
-          ? `Pts tarjeta: ${cardScores[currentIndex].scores[playerId]}` 
-          : `Card pts: ${cardScores[currentIndex].scores[playerId]}`;
-      }
+      const currentScore = cardScores[currentIndex].scores[playerId] || 0;
+      const newScore = currentScore + amount;
+
+      if (newScore < -1 || newScore > 1) return;
+
+      cardScores[currentIndex].scores[playerId] = newScore;
+      playClickSound(amount > 0 ? 'add' : 'sub');
+      updateCardUI();
     }
 
     function nextCard() {
@@ -1173,6 +1472,17 @@ Asegúrate de incluir cultura pop, cine, música, datos curiosos globales y cult
       }
     }
 
+    function confirmReturnToMenu() {
+      const isSpanish = document.getElementById('engine-selector').value === 'gemini_es';
+      const msg = isSpanish 
+        ? "¿Seguro que quieres salir al menú principal? La partida actual se reiniciará." 
+        : "Are you sure you want to exit to the main menu? The current game will be reset.";
+
+      if (confirm(msg)) {
+        returnToSetup();
+      }
+    }
+
     function showResults() {
       const modal = document.getElementById('results-modal');
       const winnerText = document.getElementById('winner-announcement');
@@ -1181,8 +1491,8 @@ Asegúrate de incluir cultura pop, cine, música, datos curiosos globales y cult
 
       document.getElementById('modal-title-text').innerText = isSpanish ? "RESULTADOS FINALES" : "FINAL RESULTS";
       document.getElementById('analysis-section-title').innerText = isSpanish ? "ANÁLISIS DE CONOCIMIENTO" : "KNOWLEDGE ANALYSIS";
+      document.getElementById('btn-modal-restart').innerText = isSpanish ? "Nuevo Juego / Configuración" : "New Game / Setup";
 
-      // Calculate totals
       players.forEach(p => {
         p.totalScore = cardScores.reduce((acc, card) => acc + (card.scores[p.id] || 0), 0);
       });
@@ -1204,7 +1514,6 @@ Asegúrate de incluir cultura pop, cine, música, datos curiosos globales y cult
         `;
       }
 
-      // Ranking table
       let rankingHTML = '<div style="display:flex; flex-direction:column; gap:6px; margin-bottom:15px;">';
       ranked.forEach((p, idx) => {
         rankingHTML += `
@@ -1216,7 +1525,6 @@ Asegúrate de incluir cultura pop, cine, música, datos curiosos globales y cult
       });
       rankingHTML += '</div>';
 
-      // Category breakdown
       const catStats = {};
       cardScores.forEach(card => {
         if (!catStats[card.category]) catStats[card.category] = {};
